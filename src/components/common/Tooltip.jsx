@@ -1,11 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 
 const Tooltip = ({ children, targetRef, visible, message, offset = 12 }) => {
-  const [position, setPosition] = useState({ top: 0, left: 0 });
-  const tooltipRef = useRef(null);
+  const [position, setPosition] = React.useState({ top: 0, left: 0 });
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (visible && targetRef.current) {
       const rect = targetRef.current.getBoundingClientRect();
       setPosition({
@@ -19,7 +18,6 @@ const Tooltip = ({ children, targetRef, visible, message, offset = 12 }) => {
 
   return ReactDOM.createPortal(
     <div
-      ref={tooltipRef}
       className="tooltip-portal"
       style={{
         position: 'fixed',

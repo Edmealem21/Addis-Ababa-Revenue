@@ -28,6 +28,10 @@ const Sidebar = ({ collapsed }) => {
       </div>
 
       <nav className="sidebar-nav">
+        {/* // src/components/common/Sidebar.jsx (excerpt)
+        <NavLink to="/ictadmin" className="nav-item">
+          <FaUserCog /> ICT አስተዳዳሪ
+        </NavLink> */}
         {/* Dashboard */}
         <NavLink 
           to="/dashboard" 

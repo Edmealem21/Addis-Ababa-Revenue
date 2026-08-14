@@ -1,5 +1,5 @@
 import React from 'react';
-import addisLogo from '../../assets/images/addis-logo.png';
+import addisLogo from '../../../assets/images/addis-logo.png';
 
 const Dashboard = () => {
   return (
