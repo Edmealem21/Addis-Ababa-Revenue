@@ -25,7 +25,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(90deg, #3d66a3 0%, #6d98cf 40%, #55414b 70%, #3a2805 100%);
+  background: linear-gradient(45deg, #1a3c6e 0%, #2a5a9a 40%, #e8a735 90%, #c48b1a 100%);
   padding: 20px;
 }
 .login-wrapper {
@@ -76,7 +76,7 @@ body {
   border-radius: 0;
   box-shadow: 0 20px 60px rgba(0,0,0,0.25);
   width: 100%;
-  padding: 40px 35px 30px;
+  padding: 30px 30px 20px;
   position: relative;
   max-width: 400px;
 }
@@ -104,28 +104,34 @@ body {
   text-align: center;
   color: #64748b;
   font-size: 14px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
+
+/* ============================================================
+   FORM GROUP - MINIMIZED VERTICAL GAPS
+   ============================================================ */
 .form-group {
-  margin-bottom: 22px;
+  margin-bottom: 8px;
 }
+
 .form-group label {
   display: block;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: #334155;
-  margin-bottom: 6px;
+  margin-bottom: 2px;
 }
+
 .form-group input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 8px 12px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
-  font-size: 15px;
+  font-size: 14px;
   transition: all 0.2s ease;
   background: #f8fafc;
   color: #1e293b;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 .form-group input:focus {
   outline: none;
@@ -139,24 +145,24 @@ body {
   opacity: 1 !important;
 }
 .login-button-spacer {
-  height: 35px;
+  height: 6px;
   width: 100%;
 }
 .btn-login {
   width: 100%;
-  padding: 15px;
+  padding: 12px;
   background: linear-gradient(135deg, #77a0dd, #76abf0);
   color: #ffffff;
   border: none;
   border-radius: 15px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 0px;
 }
 .btn-login:hover {
   transform: translateY(-2px);
@@ -171,9 +177,9 @@ body {
 .error-alert {
   background: #fee2e2;
   color: #dc2626;
-  padding: 12px 16px;
+  padding: 10px 14px;
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -182,8 +188,8 @@ body {
 }
 .login-footer {
   text-align: center;
-  margin-top: 25px;
-  padding-top: 18px;
+  margin-top: 18px;
+  padding-top: 14px;
   border-top: 1px solid #e2e8f0;
   font-size: 13px;
   color: #64748b;
@@ -281,7 +287,7 @@ body {
   background: #ffffff !important;
 }
 .sidebar-nav .nav-item {
-  padding: 12px 20px;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -290,8 +296,8 @@ body {
   transition: all 0.2s ease;
   border-left: 4px solid transparent;
   text-decoration: none;
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 15px;
+  font-weight: 600;
   background: #ffffff !important;
 }
 .sidebar-nav .nav-item:hover {
@@ -317,14 +323,14 @@ body {
   margin: 8px 20px;
 }
 .sidebar-nav .nav-sub-item {
-  padding: 10px 20px 10px 54px;
+  padding: 8px 20px 8px 54px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   color: #64748b;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;
   background: #ffffff !important;
 }
 .sidebar-nav .nav-sub-item:hover {
@@ -687,40 +693,257 @@ body {
 .data-controls .search-box .search-icon {
   color: #94a3b8;
 }
-/* ----- TABLE ----- */
+
+/* ============================================================
+   TABLE STYLES - ALL CONTENT IN ONE ROW
+   ============================================================ */
+
+/* ----- TABLE CONTAINER ----- */
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
 }
+
+/* ----- BASE TABLE ----- */
 table {
   width: 100%;
   border-collapse: collapse;
   border: 2px solid #1a56db;
+  table-layout: fixed;
+  min-width: 700px;
 }
-table thead th {
+
+/* ----- TABLE HEADERS - FORCE ONE LINE ----- */
+table thead th,
+.table-container table thead th,
+.data-container table thead th,
+.ictadmin-content table thead th,
+.officer-content table thead th,
+.authority-content table thead th,
+.modal-content table thead th,
+.view-modal-body table thead th,
+.dashboard-frame table thead th {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 6px 5px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  line-height: 1.2 !important;
+  min-height: 28px !important;
+  height: auto !important;
+  word-break: keep-all !important;
+  word-wrap: normal !important;
   background: #97c4e7;
-  padding: 12px 16px;
-  text-align: left;
-  font-size: 18px;
-  font-weight: 800;
   color: #253955;
   border: 2px solid #1a56db;
 }
-table tbody td {
-  padding: 12px 16px;
-  font-size: 14px;
+
+/* ----- TABLE DATA CELLS - FORCE ONE LINE ----- */
+table tbody td,
+.table-container table tbody td,
+.data-container table tbody td,
+.ictadmin-content table tbody td,
+.officer-content table tbody td,
+.authority-content table tbody td,
+.modal-content table tbody td,
+.view-modal-body table tbody td,
+.dashboard-frame table tbody td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 5px 4px !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  line-height: 1.2 !important;
+  min-height: 26px !important;
+  height: auto !important;
+  word-break: keep-all !important;
+  word-wrap: normal !important;
   color: #334155;
   border: 2px solid #1a56db;
 }
+
+/* ----- RTL (AMHARIC) SUPPORT - ONE LINE ----- */
+[dir="rtl"] table thead th,
+[dir="rtl"] .table-container table thead th,
+[dir="rtl"] .data-container table thead th,
+[dir="rtl"] .ictadmin-content table thead th,
+[dir="rtl"] .officer-content table thead th,
+[dir="rtl"] .authority-content table thead th,
+[dir="rtl"] .modal-content table thead th,
+[dir="rtl"] .view-modal-body table thead th,
+[dir="rtl"] .dashboard-frame table thead th {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 6px 5px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  word-break: keep-all !important;
+  word-wrap: normal !important;
+}
+
+[dir="rtl"] table tbody td,
+[dir="rtl"] .table-container table tbody td,
+[dir="rtl"] .data-container table tbody td,
+[dir="rtl"] .ictadmin-content table tbody td,
+[dir="rtl"] .officer-content table tbody td,
+[dir="rtl"] .authority-content table tbody td,
+[dir="rtl"] .modal-content table tbody td,
+[dir="rtl"] .view-modal-body table tbody td,
+[dir="rtl"] .dashboard-frame table tbody td {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 5px 4px !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  word-break: keep-all !important;
+  word-wrap: normal !important;
+}
+
+/* ----- TABLE HOVER EFFECT ----- */
 table tbody tr:hover {
   background: #f8fafc;
 }
-/* Status Badges */
+
+/* ----- SPECIFIC TABLE COLUMN WIDTHS ----- */
+table.tax-center thead th:nth-child(1),
+table.tax-centers thead th:nth-child(1),
+table[class*="tax-center"] thead th:nth-child(1) { width: 8% !important; min-width: 35px !important; max-width: 50px !important; }
+table.tax-center thead th:nth-child(2),
+table.tax-centers thead th:nth-child(2),
+table[class*="tax-center"] thead th:nth-child(2) { width: 32% !important; min-width: 120px !important; }
+table.tax-center thead th:nth-child(3),
+table.tax-centers thead th:nth-child(3),
+table[class*="tax-center"] thead th:nth-child(3) { width: 25% !important; min-width: 100px !important; }
+table.tax-center thead th:nth-child(4),
+table.tax-centers thead th:nth-child(4),
+table[class*="tax-center"] thead th:nth-child(4) { width: 35% !important; min-width: 120px !important; }
+
+table.employee-data thead th:nth-child(1),
+table.employees thead th:nth-child(1),
+table[class*="employee"] thead th:nth-child(1) { width: 5% !important; min-width: 30px !important; max-width: 40px !important; }
+table.employee-data thead th:nth-child(2),
+table.employees thead th:nth-child(2),
+table[class*="employee"] thead th:nth-child(2) { width: 20% !important; min-width: 100px !important; }
+table.employee-data thead th:nth-child(3),
+table.employees thead th:nth-child(3),
+table[class*="employee"] thead th:nth-child(3) { width: 15% !important; min-width: 80px !important; }
+table.employee-data thead th:nth-child(4),
+table.employees thead th:nth-child(4),
+table[class*="employee"] thead th:nth-child(4) { width: 20% !important; min-width: 100px !important; }
+table.employee-data thead th:nth-child(5),
+table.employees thead th:nth-child(5),
+table[class*="employee"] thead th:nth-child(5) { width: 15% !important; min-width: 80px !important; }
+table.employee-data thead th:nth-child(6),
+table.employees thead th:nth-child(6),
+table[class*="employee"] thead th:nth-child(6) { width: 25% !important; min-width: 100px !important; }
+
+table.user-data thead th:nth-child(1),
+table.users thead th:nth-child(1),
+table[class*="user"] thead th:nth-child(1) { width: 5% !important; min-width: 30px !important; max-width: 40px !important; }
+table.user-data thead th:nth-child(2),
+table.users thead th:nth-child(2),
+table[class*="user"] thead th:nth-child(2) { width: 18% !important; min-width: 90px !important; }
+table.user-data thead th:nth-child(3),
+table.users thead th:nth-child(3),
+table[class*="user"] thead th:nth-child(3) { width: 12% !important; min-width: 70px !important; }
+table.user-data thead th:nth-child(4),
+table.users thead th:nth-child(4),
+table[class*="user"] thead th:nth-child(4) { width: 15% !important; min-width: 80px !important; }
+table.user-data thead th:nth-child(5),
+table.users thead th:nth-child(5),
+table[class*="user"] thead th:nth-child(5) { width: 12% !important; min-width: 70px !important; }
+table.user-data thead th:nth-child(6),
+table.users thead th:nth-child(6),
+table[class*="user"] thead th:nth-child(6) { width: 10% !important; min-width: 60px !important; }
+table.user-data thead th:nth-child(7),
+table.users thead th:nth-child(7),
+table[class*="user"] thead th:nth-child(7) { width: 13% !important; min-width: 70px !important; }
+table.user-data thead th:nth-child(8),
+table.users thead th:nth-child(8),
+table[class*="user"] thead th:nth-child(8) { width: 15% !important; min-width: 80px !important; }
+
+table.bank-accounts thead th:nth-child(1),
+table[class*="bank"] thead th:nth-child(1) { width: 5% !important; min-width: 30px !important; max-width: 40px !important; }
+table.bank-accounts thead th:nth-child(2),
+table[class*="bank"] thead th:nth-child(2) { width: 20% !important; min-width: 100px !important; }
+table.bank-accounts thead th:nth-child(3),
+table[class*="bank"] thead th:nth-child(3) { width: 20% !important; min-width: 100px !important; }
+table.bank-accounts thead th:nth-child(4),
+table[class*="bank"] thead th:nth-child(4) { width: 20% !important; min-width: 100px !important; }
+table.bank-accounts thead th:nth-child(5),
+table[class*="bank"] thead th:nth-child(5) { width: 15% !important; min-width: 80px !important; }
+table.bank-accounts thead th:nth-child(6),
+table[class*="bank"] thead th:nth-child(6) { width: 20% !important; min-width: 100px !important; }
+
+table.tax-payers thead th:nth-child(1),
+table.taxpayers thead th:nth-child(1),
+table[class*="taxpayer"] thead th:nth-child(1) { width: 4% !important; min-width: 25px !important; max-width: 35px !important; }
+table.tax-payers thead th:nth-child(2),
+table.taxpayers thead th:nth-child(2),
+table[class*="taxpayer"] thead th:nth-child(2) { width: 15% !important; min-width: 80px !important; }
+table.tax-payers thead th:nth-child(3),
+table.taxpayers thead th:nth-child(3),
+table[class*="taxpayer"] thead th:nth-child(3) { width: 12% !important; min-width: 70px !important; }
+table.tax-payers thead th:nth-child(4),
+table.taxpayers thead th:nth-child(4),
+table[class*="taxpayer"] thead th:nth-child(4) { width: 12% !important; min-width: 70px !important; }
+table.tax-payers thead th:nth-child(5),
+table.taxpayers thead th:nth-child(5),
+table[class*="taxpayer"] thead th:nth-child(5) { width: 12% !important; min-width: 70px !important; }
+table.tax-payers thead th:nth-child(6),
+table.taxpayers thead th:nth-child(6),
+table[class*="taxpayer"] thead th:nth-child(6) { width: 12% !important; min-width: 70px !important; }
+table.tax-payers thead th:nth-child(7),
+table.taxpayers thead th:nth-child(7),
+table[class*="taxpayer"] thead th:nth-child(7) { width: 8% !important; min-width: 50px !important; }
+table.tax-payers thead th:nth-child(8),
+table.taxpayers thead th:nth-child(8),
+table[class*="taxpayer"] thead th:nth-child(8) { width: 10% !important; min-width: 60px !important; }
+table.tax-payers thead th:nth-child(9),
+table.taxpayers thead th:nth-child(9),
+table[class*="taxpayer"] thead th:nth-child(9) { width: 15% !important; min-width: 80px !important; }
+
+table.notifications thead th:nth-child(1),
+table.notifies thead th:nth-child(1),
+table[class*="notify"] thead th:nth-child(1) { width: 5% !important; min-width: 30px !important; max-width: 40px !important; }
+table.notifications thead th:nth-child(2),
+table.notifies thead th:nth-child(2),
+table[class*="notify"] thead th:nth-child(2) { width: 20% !important; min-width: 100px !important; }
+table.notifications thead th:nth-child(3),
+table.notifies thead th:nth-child(3),
+table[class*="notify"] thead th:nth-child(3) { width: 18% !important; min-width: 90px !important; }
+table.notifications thead th:nth-child(4),
+table.notifies thead th:nth-child(4),
+table[class*="notify"] thead th:nth-child(4) { width: 15% !important; min-width: 80px !important; }
+table.notifications thead th:nth-child(5),
+table.notifies thead th:nth-child(5),
+table[class*="notify"] thead th:nth-child(5) { width: 15% !important; min-width: 80px !important; }
+table.notifications thead th:nth-child(6),
+table.notifies thead th:nth-child(6),
+table[class*="notify"] thead th:nth-child(6) { width: 12% !important; min-width: 70px !important; }
+table.notifications thead th:nth-child(7),
+table.notifies thead th:nth-child(7),
+table[class*="notify"] thead th:nth-child(7) { width: 15% !important; min-width: 80px !important; }
+
+/* ----- STATUS BADGES ----- */
 .status-badge {
-  padding: 4px 14px;
+  padding: 3px 10px;
   border-radius: 9999px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   display: inline-block;
+  white-space: nowrap;
 }
 .status-badge.active {
   background: #d1fae5;
@@ -734,27 +957,35 @@ table tbody tr:hover {
   background: #fef3c7;
   color: #92400e;
 }
-/* Table Actions */
+
+/* ----- TABLE ACTIONS ----- */
 .table-actions {
-  display: flex;
-  gap: 6px;
-  align-items: center;
+  display: inline-flex !important;
+  gap: 3px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
 }
 .table-actions .action-btn {
-  width: 30px; height: 30px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  transition: all 0.2s ease;
-  background: #f1f5f9;
-  color: #64748b;
+  width: 26px !important;
+  height: 26px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  transition: all 0.2s ease !important;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+  min-width: 26px !important;
 }
 .table-actions .action-btn:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 .table-actions .action-btn.view { color: #3498db; }
 .table-actions .action-btn.view:hover { background: #dbeafe; }
@@ -765,6 +996,49 @@ table tbody tr:hover {
 .table-actions .action-btn.lock { color: #8b5cf6; }
 .table-actions .action-btn.lock:hover { background: #ede9fe; }
 
+/* ----- CODE BADGE ----- */
+.code-badge {
+  background: #e8edf4;
+  color: #1a3c6e;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+  border: 1px solid #cbd5e1;
+  white-space: nowrap;
+}
+
+/* ----- IDENTITY BUTTONS ----- */
+.identity-btn {
+  border: none;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.identity-btn.create-btn {
+  background-color: #dc3545;
+}
+.identity-btn.create-btn:hover {
+  background-color: #bd2130;
+}
+.identity-btn.status-btn {
+  background-color: #28a745;
+}
+.identity-btn.status-btn:hover {
+  background-color: #218838;
+}
+
 /* ----- PAGINATION ----- */
 .pagination {
   display: flex;
@@ -774,11 +1048,13 @@ table tbody tr:hover {
   margin-top: 16px;
   padding-top: 0;
   padding-bottom: 18px;
+  flex-wrap: wrap;
 }
 .pagination-info {
   font-size: 14px;
   color: #64748b;
   margin-right: auto;
+  white-space: nowrap;
 }
 .pagination button {
   padding: 6px 14px;
@@ -790,6 +1066,7 @@ table tbody tr:hover {
   transition: all 0.2s ease;
   font-size: 14px;
   font-weight: 100;
+  white-space: nowrap;
 }
 .pagination button:hover:not(:disabled) {
   background: #1a3c6e;
@@ -803,20 +1080,7 @@ table tbody tr:hover {
 .pagination .page-info {
   font-size: 14px;
   color: #475569;
-}
-
-/* ----- CODE BADGE (Tax Center) ----- */
-.code-badge {
-  background: #e8edf4;
-  color: #1a3c6e;
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  font-family: 'Courier New', monospace;
-  letter-spacing: 0.5px;
-  border: 1px solid #cbd5e1;
+  white-space: nowrap;
 }
 
 /* ============================================================
@@ -866,12 +1130,12 @@ table tbody tr:hover {
   color: #e74c3c;
 }
 .register-form-body {
-  padding: 24px;
+  padding: 18px 20px;
 }
 .register-form-body .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+  gap: 12px;
 }
 .register-form-body .form-grid .form-group input {
   width: 100%;
@@ -879,8 +1143,8 @@ table tbody tr:hover {
 .register-form-actions {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
-  padding-top: 20px;
+  margin-top: 12px;
+  padding-top: 12px;
   border-top: 1px solid #e2e8f0;
 }
 .required {
@@ -963,7 +1227,7 @@ table tbody tr:hover {
 .modal-body .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr !important;
-  gap: 20px;
+  gap: 12px;
 }
 .modal-body .form-grid .full-width {
   grid-column: 1 / -1 !important;
@@ -979,7 +1243,7 @@ table tbody tr:hover {
   align-items: center;
   gap: 30px;
   margin: 0 -20px -20px -20px;
-  padding: 15px 20px;
+  padding: 12px 20px;
   border-top: none;
   background: #17a2b8;
 }
@@ -1013,7 +1277,6 @@ table tbody tr:hover {
   background: #218838;
   color: #ffffff;
 }
-/* View details inside modal */
 .view-details p {
   padding: 8px 0;
   border-bottom: 1px solid #f1f5f9;
@@ -1059,12 +1322,10 @@ table tbody tr:hover {
 .ictadmin-sidebar.collapsed {
   width: 70px;
 }
-
-/* hide text elements when collapsed */
 .ictadmin-sidebar.collapsed .ictadmin-brand h3,
 .ictadmin-sidebar.collapsed .ictadmin-nav-item span,
 .ictadmin-sidebar.collapsed .ictadmin-nav-subitem span,
-.ictadmin-sidebar.collapsed .ictadmin-welcome-text {   /* <-- added */
+.ictadmin-sidebar.collapsed .ictadmin-welcome-text {
   display: none;
 }
 .ictadmin-sidebar.collapsed .ictadmin-nav-item,
@@ -1087,11 +1348,10 @@ table tbody tr:hover {
   padding-left: 0;
 }
 
-/* ----- BRAND: logo centered, text below (CHANGED) ----- */
 .ictadmin-brand {
   display: flex;
-  flex-direction: column;          /* stack vertically */
-  align-items: center;            /* center horizontally */
+  flex-direction: column;
+  align-items: center;
   padding: 16px 20px 16px;
   border-bottom: 1px solid #e2e8f0;
   margin-bottom: 16px;
@@ -1102,7 +1362,7 @@ table tbody tr:hover {
   width: auto;
   border-radius: 50%;
   border: 2px solid #c48b1a;
-  margin-bottom: 8px;             /* space between logo and text */
+  margin-bottom: 8px;
 }
 .ictadmin-brand h3 {
   font-size: 24px;
@@ -1112,7 +1372,6 @@ table tbody tr:hover {
   font-weight: 700;
 }
 
-/* ----- welcome text (NEW) ----- */
 .ictadmin-welcome-text {
   font-size: 14px;
   color: #64748b;
@@ -1127,7 +1386,6 @@ table tbody tr:hover {
   font-weight: 500;
 }
 
-/* collapsed state: shrink logo, remove extra padding */
 .ictadmin-sidebar.collapsed .ictadmin-brand {
   padding: 12px 0;
 }
@@ -1140,11 +1398,10 @@ table tbody tr:hover {
   display: flex;
   flex-direction: column;
 }
-.ictadmin-nav-item{
-  font-size: 20px;
-  font-weight: 700;
-}
-.ictadmin-nav-item, .ictadmin-nav-subitem {
+
+/* UNIFIED SIDEBAR FONT SIZES - ICT ADMIN */
+.ictadmin-nav-item,
+.ictadmin-nav-subitem {
   padding: 10px 20px;
   display: flex;
   align-items: center;
@@ -1154,12 +1411,16 @@ table tbody tr:hover {
   transition: 0.2s;
   cursor: pointer;
   border-left: 3px solid transparent;
+  font-size: 15px !important;
+  font-weight: 600 !important;
 }
-.ictadmin-nav-item:hover, .ictadmin-nav-subitem:hover {
+.ictadmin-nav-item:hover,
+.ictadmin-nav-subitem:hover {
   background: #f1f5f9;
   color: #1a3c6e;
 }
-.ictadmin-nav-item.active, .ictadmin-nav-subitem.active {
+.ictadmin-nav-item.active,
+.ictadmin-nav-subitem.active {
   background: #e8edf4;
   color: #1a3c6e;
   border-left-color: #e8a735;
@@ -1170,7 +1431,6 @@ table tbody tr:hover {
 }
 .ictadmin-nav-subitem {
   padding-left: 50px;
-  font-size: 16px;
 }
 .ictadmin-content {
   flex: 1;
@@ -1280,6 +1540,8 @@ table tbody tr:hover {
   display: flex;
   flex-direction: column;
 }
+
+/* UNIFIED SIDEBAR FONT SIZES - OFFICER */
 .officer-nav-item {
   padding: 10px 20px;
   display: flex;
@@ -1290,9 +1552,8 @@ table tbody tr:hover {
   transition: 0.2s;
   cursor: pointer;
   border-left: 3px solid transparent;
-  font-size: 20px;
-  font-weight: 700;
-
+  font-size: 15px !important;
+  font-weight: 600 !important;
 }
 .officer-nav-item:hover {
   background: #f1f5f9;
@@ -1308,15 +1569,15 @@ table tbody tr:hover {
   justify-content: space-between;
 }
 .officer-nav-subitem {
-  padding: 8px 20px 8px 54px;
+  padding: 8px 20px 8px 50px;
   display: flex;
   align-items: center;
   gap: 12px;
   color: #64748b;
   text-decoration: none;
   transition: 0.2s;
-  font-size: 16px;
-  font-weight: 400;
+  font-size: 14px !important;
+  font-weight: 500 !important;
 }
 .officer-nav-subitem:hover {
   background: #f1f5f9;
@@ -1354,7 +1615,7 @@ table tbody tr:hover {
   display: flex;
   min-height: calc(100vh - 65px);
   background: #f8fafc;
-    position: relative; /* 👈 NEW – anchor for absolutely positioned header */
+  position: relative;
 }
 .authority-sidebar {
   width: 240px;
@@ -1366,7 +1627,7 @@ table tbody tr:hover {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-   margin-top: 65px; /* 👈 NEW – push sidebar below header */
+  margin-top: 65px;
 }
 .authority-sidebar.collapsed {
   width: 70px;
@@ -1404,6 +1665,8 @@ table tbody tr:hover {
   flex-direction: column;
   flex: 1;
 }
+
+/* UNIFIED SIDEBAR FONT SIZES - AUTHORITY */
 .authority-nav-item {
   padding: 10px 20px;
   display: flex;
@@ -1414,8 +1677,8 @@ table tbody tr:hover {
   transition: 0.2s;
   cursor: pointer;
   border-left: 3px solid transparent;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 15px !important;
+  font-weight: 600 !important;
 }
 .authority-nav-item:hover {
   background: #f1f5f9;
@@ -1431,21 +1694,20 @@ table tbody tr:hover {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 65px);
-   margin-top: 65px; /* 👈 NEW – push content below header */
+  margin-top: 65px;
 }
 .authority-page-content {
   flex: 1;
   padding: 20px 30px;
   background: #f8fafc;
 }
-/* === MAKE HEADER FULL WIDTH AND STICK TO TOP === */
 .authority-content > :first-child {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 65px;           /* 👈 match the header height */
-  z-index: 10;            /* ensure it sits above other content */
+  height: 65px;
+  z-index: 10;
 }
 
 /* ============================================================
@@ -1555,7 +1817,6 @@ table tbody tr:hover {
 /* ============================================================
    TOOLTIPS
    ============================================================ */
-/* Normal tooltip (absolute) */
 .tooltip-container,
 .data-container,
 .page-content,
@@ -1609,7 +1870,6 @@ table tbody tr:hover {
   opacity: 1 !important;
 }
 
-/* Portal tooltip (fixed) */
 .tooltip-content {
   background: #000205da;
   color: #ffffff;
@@ -2086,10 +2346,10 @@ table tbody tr:hover {
   color: #e74c3c;
 }
 .popup-body {
-  padding: 24px 28px;
+  padding: 18px 22px;
 }
 .popup-body .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 10px;
 }
 .popup-body .form-group.full-width {
   width: 100%;
@@ -2097,13 +2357,13 @@ table tbody tr:hover {
 .popup-body .form-group label {
   display: block;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   color: #334155;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 .popup-body .form-group input {
   width: 100%;
-  padding: 11px 14px;
+  padding: 8px 12px;
   border: 2px solid #e2e8f0;
   border-radius: 8px;
   font-size: 14px;
@@ -2122,8 +2382,8 @@ table tbody tr:hover {
 .popup-actions {
   display: flex;
   gap: 12px;
-  margin-top: 16px;
-  padding-top: 16px;
+  margin-top: 10px;
+  padding-top: 10px;
   border-top: 1px solid #e2e8f0;
 }
 .popup-actions .btn {
@@ -2352,17 +2612,14 @@ table tbody tr:hover {
 }
 
 .identity-btn.create-btn {
-  background-color: #dc3545; /* Red */
+  background-color: #dc3545;
 }
-
 .identity-btn.create-btn:hover {
   background-color: #bd2130;
 }
-
 .identity-btn.status-btn {
-  background-color: #28a745; /* Green */
+  background-color: #28a745;
 }
-
 .identity-btn.status-btn:hover {
   background-color: #218838;
 }
@@ -2382,7 +2639,7 @@ table tbody tr:hover {
   padding: 8px 12px;
   position: absolute;
   z-index: 10;
-  bottom: 125%; /* Position above the button */
+  bottom: 125%;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
@@ -2397,7 +2654,7 @@ table tbody tr:hover {
 .custom-tooltip::after {
   content: "";
   position: absolute;
-  top: 100%; /* At the bottom of the tooltip */
+  top: 100%;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
@@ -2408,4 +2665,224 @@ table tbody tr:hover {
 .tooltip-wrapper:hover .custom-tooltip {
   visibility: visible;
   opacity: 1;
-} 
+}
+
+/* ============================================================
+   DARK MODE STYLES
+   ============================================================ */
+body.dark, html.dark {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.dark .login-container {
+  background: linear-gradient(135deg, #0b1329 0%, #1e293b 50%, #0f172a 100%) !important;
+}
+
+body.dark .login-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
+  border: 1px solid #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.dark .login-subtitle,
+body.dark .login-footer {
+  color: #94a3b8 !important;
+  border-top-color: #334155 !important;
+}
+
+body.dark .login-footer strong {
+  color: #38bdf8 !important;
+}
+
+body.dark .sidebar,
+body.dark .ictadmin-sidebar,
+body.dark .officer-sidebar,
+body.dark .authority-sidebar {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-right-color: #334155 !important;
+}
+
+body.dark .sidebar-brand,
+body.dark .ictadmin-brand,
+body.dark .officer-brand,
+body.dark .authority-brand {
+  background: #1e293b !important;
+  border-bottom-color: #334155 !important;
+}
+
+body.dark .sidebar-brand h3,
+body.dark .sidebar-brand .sub-text,
+body.dark .ictadmin-welcome-text,
+body.dark .officer-welcome-text {
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+body.dark .sidebar-nav,
+body.dark .ictadmin-nav,
+body.dark .officer-nav,
+body.dark .authority-nav {
+  background: #1e293b !important;
+}
+
+body.dark .sidebar-nav .nav-item,
+body.dark .ictadmin-nav-item,
+body.dark .officer-nav-item,
+body.dark .authority-nav-item,
+body.dark .sidebar-nav .nav-sub-item,
+body.dark .ictadmin-nav-subitem,
+body.dark .officer-nav-subitem {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+body.dark .sidebar-nav .nav-item:hover,
+body.dark .ictadmin-nav-item:hover,
+body.dark .officer-nav-item:hover,
+body.dark .authority-nav-item:hover,
+body.dark .sidebar-nav .nav-sub-item:hover,
+body.dark .ictadmin-nav-subitem:hover,
+body.dark .officer-nav-subitem:hover {
+  background: #334155 !important;
+  color: #38bdf8 !important;
+}
+
+body.dark .sidebar-nav .nav-item.active,
+body.dark .ictadmin-nav-item.active,
+body.dark .officer-nav-item.active,
+body.dark .authority-nav-item.active,
+body.dark .sidebar-nav .nav-sub-item.active,
+body.dark .ictadmin-nav-subitem.active,
+body.dark .officer-nav-subitem.active {
+  background: #334155 !important;
+  color: #fbbf24 !important;
+  border-left-color: #fbbf24 !important;
+}
+
+body.dark .sidebar-nav .nav-item .nav-icon,
+body.dark .sidebar-nav .nav-item.active .nav-icon {
+  color: #fbbf24 !important;
+}
+
+body.dark .navbar {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 40%, #78350f 70%, #451a03 100%) !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+body.dark .main-content,
+body.dark .ictadmin-content,
+body.dark .officer-content,
+body.dark .authority-content,
+body.dark .ictadmin-main,
+body.dark .officer-main {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.dark .dashboard-frame,
+body.dark .data-container,
+body.dark .card,
+body.dark .popup-card,
+body.dark .profile-dropdown {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.dark .dashboard-frame .welcome-text {
+  color: #38bdf8 !important;
+}
+
+body.dark .dashboard-frame .welcome-sub {
+  color: #cbd5e1 !important;
+}
+
+body.dark .frame-header {
+  background: #334155 !important;
+  border-bottom-color: #475569 !important;
+}
+
+body.dark .frame-title {
+  color: #f87171 !important;
+}
+
+body.dark .total-count {
+  background: #475569 !important;
+  color: #fbbf24 !important;
+}
+
+body.dark table {
+  border-color: #475569 !important;
+}
+
+body.dark table thead th {
+  background: #334155 !important;
+  color: #fbbf24 !important;
+  border-color: #475569 !important;
+}
+
+body.dark table tbody td {
+  background: #1e293b !important;
+  color: #cbd5e1 !important;
+  border-color: #334155 !important;
+}
+
+body.dark table tbody tr:hover td {
+  background: #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: #334155 !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+body.dark input::placeholder {
+  color: #94a3b8 !important;
+}
+
+body.dark .profile-dropdown-content {
+  background: #1e293b !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+body.dark .profile-dropdown-name {
+  color: #f8fafc !important;
+}
+
+body.dark .profile-dropdown-job {
+  color: #38bdf8 !important;
+}
+
+body.dark .profile-sub-dropdown {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+body.dark .sub-dropdown-item {
+  color: #cbd5e1 !important;
+}
+
+body.dark .sub-dropdown-item:hover {
+  background: #334155 !important;
+  color: #38bdf8 !important;
+}
+
+body.dark .footer,
+body.dark .officer-global-footer {
+  background: #1e293b !important;
+  color: #94a3b8 !important;
+  border-top-color: #334155 !important;
+}
+
+body.dark .footer strong,
+body.dark .officer-global-footer strong {
+  color: #38bdf8 !important;
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaSearch } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
+import { useLanguage } from '../../../context/LanguageContext';
 
 const AllNotifies = () => {
   const [searchTerm, setSearchTerm] = useState('');

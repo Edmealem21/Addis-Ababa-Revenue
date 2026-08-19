@@ -3,9 +3,11 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Layout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { t } = useLanguage();
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -15,7 +17,7 @@ const Layout = () => {
     <div className="dashboard-container">
       {/* Header - Full Width at Top */}
       <Header 
-        title="የአዲስ አበባ ገቢዎብ አስተዳደር ስርዓት" 
+        title={t('appTitle')} 
         toggleSidebar={toggleSidebar} 
       />
       

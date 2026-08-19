@@ -27,7 +27,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: hsl(229, 56%, 72%);  /* ← Login Page Background Color */
+  background: hsl(229, 56%, 72%);
+  /* ← Login Page Background Color */
   padding: 20px;
 }
 
@@ -45,6 +46,7 @@ body {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -393,9 +395,10 @@ body {
   color: #1a3c6e;
   background: #e8edf4 !important;
 }
-.sub-text{
+
+.sub-text {
   background: #1a1a2e;
-  
+
 }
 
 /* ============================================
@@ -513,6 +516,7 @@ body {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1020,12 +1024,15 @@ table tbody tr:hover {
   .sidebar {
     width: 220px;
   }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .dashboard-frame .logo-section .logo-image {
     max-height: 300px;
   }
+
   .dashboard-frame .logo-section .welcome-text {
     font-size: 28px;
   }
@@ -1035,69 +1042,89 @@ table tbody tr:hover {
   .sidebar {
     width: 60px;
   }
+
   .sidebar-brand h3,
   .sidebar-brand span,
   .sidebar-nav .nav-item span {
     display: none;
   }
+
   .sidebar-nav .nav-item {
     justify-content: center;
     padding: 14px;
   }
+
   .sidebar-nav .nav-sub-item {
     padding: 10px 14px 10px 14px;
     justify-content: center;
   }
+
   .sidebar-nav .nav-sub-item span {
     display: none;
   }
+
   .main-content {
     margin-left: 60px;
   }
+
   .navbar {
     padding: 10px 16px;
   }
+
   .navbar .navbar-left .page-title {
     font-size: 15px;
   }
+
   .page-content {
     padding: 15px;
   }
+
   .login-card {
     padding: 30px 20px 25px;
   }
+
   .login-title {
     font-size: 19px;
   }
+
   .data-container {
     padding: 16px;
   }
+
   .data-controls {
     flex-direction: column;
     align-items: stretch;
   }
+
   .data-controls .search-box input {
     width: 100%;
   }
+
   .register-form {
     padding: 16px;
   }
+
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .dashboard-frame {
     padding: 20px 15px;
     min-height: calc(100vh - 140px);
   }
+
   .dashboard-frame .logo-section .logo-image {
     max-height: 200px;
   }
+
   .dashboard-frame .logo-section .welcome-text {
     font-size: 22px;
   }
+
   .dashboard-frame .logo-section .welcome-sub {
     font-size: 15px;
   }
+
   .logo-circle {
     width: 140px;
     height: 140px;
@@ -1109,39 +1136,49 @@ table tbody tr:hover {
   .navbar .navbar-right .admin-profile .admin-name {
     display: none;
   }
+
   .ict-subnav {
     flex-direction: column;
   }
+
   .data-container .data-header {
     flex-direction: column;
     align-items: stretch;
   }
+
   .pagination {
     flex-wrap: wrap;
     justify-content: center;
   }
+
   .logo-circle {
     width: 110px;
     height: 110px;
     padding: 15px;
     border-width: 3px;
   }
+
   .dashboard-frame .logo-section .logo-image {
     max-height: 150px;
   }
+
   .dashboard-frame .logo-section .welcome-text {
     font-size: 18px;
   }
+
   .dashboard-frame .logo-section .welcome-sub {
     font-size: 13px;
   }
+
   .login-card {
     padding: 25px 16px 20px;
   }
+
   .login-title {
     font-size: 17px;
   }
 }
+
 /* ============================================
    REGISTER FORM FRAME - INSIDE MAIN FRAME
    ============================================ */
@@ -1161,6 +1198,7 @@ table tbody tr:hover {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -1461,26 +1499,26 @@ table tbody tr:hover {
   .register-form-body .form-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .frame-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .data-controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .data-controls .search-box input {
     width: 100%;
   }
-  
+
   .pagination {
     flex-wrap: wrap;
     justify-content: center;
   }
-  
+
   .frame-actions {
     width: 100%;
     flex-wrap: wrap;

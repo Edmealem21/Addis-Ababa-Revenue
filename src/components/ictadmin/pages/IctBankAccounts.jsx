@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
+import { useLanguage } from '../../../context/LanguageContext';
 
 const IctBankAccounts = () => {
+  const { t, tData } = useLanguage();
   const [bankAccounts, setBankAccounts] = useState([
     { id: 1, bankName: 'አዲስ ባንክ', accountNumber: '1000123456', accountOwner: 'አስቴር አለሙ', branch: 'ቅዱስ ጊዮርጊስ' },
     { id: 2, bankName: 'ኢትዮጵያ ንግድ ባንክ', accountNumber: '2000789012', accountOwner: 'ተስፋዬ መኮንን', branch: 'ቦሌ' },
@@ -42,10 +44,10 @@ const IctBankAccounts = () => {
   const getViewFields = (acc) => {
     if (!acc) return [];
     return [
-      { label: 'የባንክ ስም', value: acc.bankName },
-      { label: 'የሂሳብ ቁጥር', value: acc.accountNumber },
-      { label: 'የሂሳብ ባለቤት', value: acc.accountOwner },
-      { label: 'ቅርንጫፍ', value: acc.branch },
+      { label: t('bankName'), value: tData(acc.bankName) },
+      { label: t('accountNumber'), value: acc.accountNumber },
+      { label: t('accountOwner'), value: tData(acc.accountOwner) },
+      { label: t('branch'), value: tData(acc.branch) },
     ];
   };
 
@@ -124,59 +126,59 @@ const IctBankAccounts = () => {
       <div className="data-container">
         <div className="frame-header">
           <div className="frame-actions">
-            <button className="btn btn-primary" onClick={openRegister}><FaPlus /> አዲስ መዝገብ</button>
-            <span className="total-count">ጠቅላላ: {bankAccounts.length}</span>
+            <button className="btn btn-primary" onClick={openRegister}><FaPlus /> {t('addRecord')}</button>
+            <span className="total-count">{t('total')}: {bankAccounts.length}</span>
           </div>
-          <div className="frame-title">🏦 የባንክ መለያዎች</div>
+          <div className="frame-title">{t('bankAccountsTitle')}</div>
         </div>
         <div className="data-controls">
           <div className="per-page">
-            <span>Display</span>
+            <span>{t('display')}</span>
             <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
               <option value={1}>1</option><option value={2}>2</option><option value={5}>5</option><option value={10}>10</option>
             </select>
-            <span>per page</span>
+            <span>{t('perPage')}</span>
           </div>
           <div className="search-wrapper">
-            <span className="search-label">Search:</span>
+            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
-              <input type="text" placeholder="ፈልግ..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
+              <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
             </div>
           </div>
         </div>
         <div className="table-container">
           <table>
-            <thead><tr><th>#</th><th>Bank Name</th><th>Account Number</th><th>Account Owner</th><th>Branch</th><th>Actions</th></tr></thead>
+            <thead><tr><th>#</th><th>{t('bankName')}</th><th>{t('accountNumber')}</th><th>{t('accountOwner')}</th><th>{t('branch')}</th><th>{t('actions')}</th></tr></thead>
             <tbody>
               {currentData.map((acc, idx) => (
                 <tr key={acc.id}>
                   <td>{startIndex + idx + 1}</td>
-                  <td><strong>{acc.bankName}</strong></td>
+                  <td><strong>{tData(acc.bankName)}</strong></td>
                   <td>{acc.accountNumber}</td>
-                  <td>{acc.accountOwner}</td>
-                  <td>{acc.branch}</td>
+                  <td>{tData(acc.accountOwner)}</td>
+                  <td>{tData(acc.branch)}</td>
                   <td>
                     <div className="table-actions">
-                      <button className="action-btn view" onClick={() => openView(acc)}><FaEye /></button>
-                      <button className="action-btn edit" onClick={() => openEdit(acc)}><FaEdit /></button>
-                      <button className="action-btn delete" onClick={() => openDelete(acc)}><FaTrash /></button>
+                      <button className="action-btn view" title={t('view')} onClick={() => openView(acc)}><FaEye /></button>
+                      <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(acc)}><FaEdit /></button>
+                      <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(acc)}><FaTrash /></button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {currentData.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>DATA NOT AVAILABLE</td></tr>}
+              {currentData.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>{t('noData')}</td></tr>}
             </tbody>
           </table>
         </div>
         {filteredData.length > 0 && (
           <div className="pagination">
-            <span className="pagination-info">Showing {startIndex+1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length}</span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage===1}>First</button>
-            <button onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage===1}>Previous</button>
-            <span className="page-indicator">Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage===totalPages}>Next</button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage===totalPages}>Last</button>
+            <span className="pagination-info">{t('showing')} {startIndex+1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}</span>
+            <button onClick={() => setCurrentPage(1)} disabled={currentPage===1}>{t('first')}</button>
+            <button onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage===1}>{t('previous')}</button>
+            <span className="page-indicator">{t('page')} {currentPage} {t('of')} {totalPages}</span>
+            <button onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage===totalPages}>{t('next')}</button>
+            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage===totalPages}>{t('last')}</button>
           </div>
         )}
       </div>
@@ -185,18 +187,18 @@ const IctBankAccounts = () => {
       {showRegister && (
         <div className="modal-overlay" onClick={closeRegister}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
-            <div className="modal-header"><div className="modal-title"><FaPlus className="modal-icon" /> አዲስ ይመዝገቡ</div></div>
+            <div className="modal-header"><div className="modal-title"><FaPlus className="modal-icon" /> {t('registerNew')}</div></div>
             <div className="modal-body">
               <form onSubmit={handleRegister}>
                 <div className="form-grid">
-                  <div className="form-group full-width"><label>Bank Name *</label><input name="bankName" value={formData.bankName} onChange={handleChange} required /></div>
-                  <div className="form-group"><label>Account Number *</label><input name="accountNumber" value={formData.accountNumber} onChange={handleChange} required /></div>
-                  <div className="form-group"><label>Account Owner *</label><input name="accountOwner" value={formData.accountOwner} onChange={handleChange} required /></div>
-                  <div className="form-group"><label>Branch *</label><input name="branch" value={formData.branch} onChange={handleChange} required /></div>
+                  <div className="form-group full-width"><label>{t('bankName')} *</label><input name="bankName" value={formData.bankName} onChange={handleChange} required /></div>
+                  <div className="form-group"><label>{t('accountNumber')} *</label><input name="accountNumber" value={formData.accountNumber} onChange={handleChange} required /></div>
+                  <div className="form-group"><label>{t('accountOwner')} *</label><input name="accountOwner" value={formData.accountOwner} onChange={handleChange} required /></div>
+                  <div className="form-group"><label>{t('branch')} *</label><input name="branch" value={formData.branch} onChange={handleChange} required /></div>
                 </div>
                 <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>{loading ? 'በመመዝገብ ላይ...' : 'ይመዝገቡ'}</button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeRegister}>ሰርዝ</button>
+                  <button type="submit" className="btn-btn-success" disabled={loading}>{loading ? t('registering') : t('register')}</button>
+                  <button type="button" className="btn-btn-secondary" onClick={closeRegister}>{t('cancel')}</button>
                 </div>
               </form>
             </div>
@@ -209,8 +211,8 @@ const IctBankAccounts = () => {
         <div className="modal-overlay" onClick={closeActionModal}>
           <div className="modal-content view-modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2c3e50, #3498db)' }}>
-              <div className="modal-title"><FaEye className="modal-icon" /> ዝርዝር መረጃ</div>
-              <button className="modal-close-btn" onClick={closeActionModal}><FaTimes /></button>
+              <div className="modal-title"><FaEye className="modal-icon" /> {t('details')}</div>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body view-modal-body">
               <div className="view-field-grid">
@@ -231,18 +233,18 @@ const IctBankAccounts = () => {
               {usePagination && totalViewPages > 1 && (
                 <div className="view-pagination">
                   <button onClick={() => setViewPage(prev => Math.max(prev - 1, 1))} disabled={viewPage === 1}>
-                    Previous
+                    {t('previous')}
                   </button>
-                  <span>ገጽ {viewPage} ከ {totalViewPages}</span>
+                  <span>{t('page')} {viewPage} {t('of')} {totalViewPages}</span>
                   <button onClick={() => setViewPage(prev => Math.min(prev + 1, totalViewPages))} disabled={viewPage === totalViewPages}>
-                    Next
+                    {t('next')}
                   </button>
                 </div>
               )}
             </div>
             <div className="view-modal-footer">
               <button type="button" className="btn-cancel-red" onClick={closeActionModal}>
-                ዝጋ
+                {t('close')}
               </button>
             </div>
           </div>
@@ -254,20 +256,20 @@ const IctBankAccounts = () => {
         <div className="modal-overlay" onClick={closeActionModal}>
           <div className="modal-content edit-modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-title"><FaEdit className="modal-icon" /> አርትዕ</div>
-              <button className="modal-close-btn" onClick={closeActionModal}><FaTimes /></button>
+              <div className="modal-title"><FaEdit className="modal-icon" /> {t('edit')}</div>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleEdit}>
                 <div className="form-grid">
-                  <div className="form-group full-width"><label>Bank Name *</label><input name="bankName" value={editFormData.bankName} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>Account Number *</label><input name="accountNumber" value={editFormData.accountNumber} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>Account Owner *</label><input name="accountOwner" value={editFormData.accountOwner} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>Branch *</label><input name="branch" value={editFormData.branch} onChange={handleEditChange} required /></div>
+                  <div className="form-group full-width"><label>{t('bankName')} *</label><input name="bankName" value={editFormData.bankName} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('accountNumber')} *</label><input name="accountNumber" value={editFormData.accountNumber} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('accountOwner')} *</label><input name="accountOwner" value={editFormData.accountOwner} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('branch')} *</label><input name="branch" value={editFormData.branch} onChange={handleEditChange} required /></div>
                 </div>
                 <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>{loading ? '...' : 'ለውጦችን መዝግብ'}</button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>ዝጋ</button>
+                  <button type="submit" className="btn-btn-success" disabled={loading}>{loading ? t('saving') : t('saveChanges')}</button>
+                  <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>{t('close')}</button>
                 </div>
               </form>
             </div>
@@ -280,16 +282,16 @@ const IctBankAccounts = () => {
         <div className="modal-overlay" onClick={closeActionModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
-              <div className="modal-title"><FaTrash className="modal-icon" /> ማስጠንቀቂያ</div>
-              <button className="modal-close-btn" onClick={closeActionModal}><FaTimes /></button>
+              <div className="modal-title"><FaTrash className="modal-icon" /> {t('warning')}</div>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body" style={{ textAlign: 'center', padding: '30px' }}>
               <div style={{ fontSize: '48px', color: '#e74c3c' }}>⚠️</div>
-              <h3 style={{ color: '#e74c3c' }}>እርግጠኛ ነዎት መሰረዝ ይፈልጋሉ?</h3>
-              <p><strong>{selectedAccount.bankName}</strong> ({selectedAccount.accountNumber})</p>
+              <h3 style={{ color: '#e74c3c' }}>{t('confirmDelete')}</h3>
+              <p><strong>{tData(selectedAccount.bankName)}</strong> ({selectedAccount.accountNumber})</p>
               <div className="modal-actions" style={{ justifyContent: 'center', background: 'transparent', borderTop: 'none' }}>
-                <button className="btn-btn-danger" onClick={handleDelete} disabled={loading} style={{ background: '#e74c3c', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>ሰርዝ</button>
-                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff' }}>ሰርዝ</button>
+                <button className="btn-btn-danger" onClick={handleDelete} disabled={loading} style={{ background: '#e74c3c', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('delete')}</button>
+                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff' }}>{t('cancel')}</button>
               </div>
             </div>
           </div>

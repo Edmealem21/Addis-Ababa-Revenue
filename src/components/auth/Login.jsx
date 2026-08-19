@@ -1,22 +1,18 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock, FaSignInAlt, FaExclamationCircle } from 'react-icons/fa';
+import { FaSignInAlt, FaExclamationCircle } from 'react-icons/fa';
 import { AuthContext } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageToggle from '../common/LanguageToggle';
+import ThemeToggle from '../common/ThemeToggle';
 import addisLogo from '../../assets/images/addis-logo.png';
-
-// Fallback for revenue-logo.png (if missing, ignore)
-let revenueLogo;
-try {
-  revenueLogo = require('../../assets/images/revenue-logo.png');
-} catch (e) {
-  revenueLogo = null;
-}
 
 const Login = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useContext(AuthContext);
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -30,9 +26,8 @@ const Login = () => {
     setError('');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // === Demo Credentials ===
       if (formData.username === 'admin' && formData.password === 'admin123') {
         login({
           id: 1,
@@ -63,7 +58,6 @@ const Login = () => {
         });
         navigate('/officer/dashboard');
       }
-      // === NEW: Authority Account ===
       else if (formData.username === 'authority' && formData.password === 'authority123') {
         login({
           id: 4,
@@ -75,10 +69,10 @@ const Login = () => {
         navigate('/authority/dashboard');
       }
       else {
-        setError('የተሳሳተ የተጠቃሚ ስም ወይም የይለፍ ቃል አስገብተዋል!');
+        setError(t('loginError'));
       }
     } catch (err) {
-      setError('የመግቢያ ሂደት አልተሳካም። እባክዎ እንደገና ይሞክሩ።');
+      setError(t('loginError'));
     } finally {
       setLoading(false);
     }
@@ -88,18 +82,21 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      {/* Top right language & theme toggles */}
+      <div style={{ position: 'absolute', top: '20px', right: '24px', display: 'flex', gap: '10px', zIndex: 10 }}>
+        <LanguageToggle />
+        <ThemeToggle />
+      </div>
+
       <div className="login-wrapper">
-        {/* Logo Section */}
         <div className="login-logo-outer">
           <div className="logo-circle">
             <img src={addisLogo} alt="Addis Ababa Revenues Bureau Logo" />
           </div>
         </div>
 
-        {/* Login Form */}
         <div className="login-card">
-          {/* <h2 className="login-title">እንኳን በደህና መጡ</h2> */}
-          <p className="login-subtitle">ወደ ገቢዎች አስተዳደር ስርዓት ለመግባት መረጃዎን ያስገቡ</p>
+          <p className="login-subtitle">{t('loginSubtitle')}</p>
 
           {error && (
             <div className="error-alert">
@@ -110,12 +107,11 @@ const Login = () => {
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
-              {/* <label>የተጠቃሚ ስም</label> */}
               <div className="input-wrapper">
                 <input
                   type="text"
                   name="username"
-                  placeholder="👤 ተጠቃሚ ስም ያስገቡ"
+                  placeholder={t('usernamePlaceholder')}
                   value={formData.username}
                   onChange={handleChange}
                   required
@@ -125,12 +121,11 @@ const Login = () => {
             </div>
 
             <div className="form-group">
-              {/* <label>የይለፍ ቃል</label> */}
               <div className="input-wrapper">
                 <input
                   type="password"
                   name="password"
-                  placeholder="🔒 የይለፍ ቃል ያስገቡ"
+                  placeholder={t('passwordPlaceholder')}
                   value={formData.password}
                   onChange={handleChange}
                   required
@@ -141,18 +136,18 @@ const Login = () => {
             <div className="login-button-spacer"></div>
 
             <button type="submit" className="btn-login" disabled={loading}>
-              <FaSignInAlt />
-              {loading ? 'እባክዎ ይጠብቁ...' : 'ግባ'}
+              <FaSignInAlt style={{ marginRight: '8px' }} />
+              {loading ? t('loggingIn') : t('loginBtn')}
             </button>
           </form>
 
           <div className="login-footer">
             <p>
               &copy; {currentYear} 
-              <strong> የአዲስ አበባ ከተማ አስተዳደር ገቢዎብ</strong>
+              <strong> {t('footerText')}</strong>
             </p>
-            <p style={{ fontSize: '12px', color: '#aaa', marginTop: '4px', lineHeight: '1.6' }}>
-              <strong>Demo Accounts:</strong><br />
+            <p style={{ fontSize: '12px', color: '#888', marginTop: '6px', lineHeight: '1.6' }}>
+              <strong>{t('demoAccounts')}</strong><br />
               👤 admin / admin123 (Admin)<br />
               👤 ictadmin / ictadmin123 (ICT Administrator)<br />
               👤 officer / officer123 (Officer)<br />

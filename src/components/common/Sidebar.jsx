@@ -10,10 +10,12 @@ import {
   FaTachometerAlt,
 } from 'react-icons/fa';
 import addisLogo from '../../assets/images/addis-logo.png';
+import { useLanguage } from '../../context/LanguageContext';
 
 const Sidebar = ({ collapsed }) => {
   const location = useLocation();
   const [ictExpanded, setIctExpanded] = useState(true);
+  const { t } = useLanguage();
 
   const isActive = (path) => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
@@ -23,22 +25,17 @@ const Sidebar = ({ collapsed }) => {
     <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-brand">
         <img src={addisLogo} alt="Addis Ababa Revenues Bureau" />
-        {/* <h3>የአዲስ አበባ ገቢዎች</h3> */}
-        <span className="sub-text">የአሰሳ ምናሌ</span>
+        <span className="sub-text">{t('navMenu')}</span>
       </div>
 
       <nav className="sidebar-nav">
-        {/* // src/components/common/Sidebar.jsx (excerpt)
-        <NavLink to="/ictadmin" className="nav-item">
-          <FaUserCog /> ICT አስተዳዳሪ
-        </NavLink> */}
         {/* Dashboard */}
         <NavLink 
           to="/dashboard" 
           className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}
         >
           <span className="nav-icon"><FaTachometerAlt /></span>
-          <span>ዳሽቦርድ</span>
+          <span>{t('dashboard')}</span>
         </NavLink>
 
         {/* Tax Center */}
@@ -47,7 +44,7 @@ const Sidebar = ({ collapsed }) => {
           className={`nav-item ${isActive('/taxcenter') ? 'active' : ''}`}
         >
           <span className="nav-icon"><FaBuilding /></span>
-          <span>ታክስ ማእከል</span>
+          <span>{t('taxCenter')}</span>
         </NavLink>
 
         <div className="nav-divider"></div>
@@ -59,7 +56,7 @@ const Sidebar = ({ collapsed }) => {
           style={{ cursor: 'pointer' }}
         >
           <span className="nav-icon"><FaUserCog /></span>
-          <span style={{ flex: 1 }}>የአይቲ አስተዳዳሪ</span>
+          <span style={{ flex: 1 }}>{t('ictAdmin')}</span>
           {!collapsed && (ictExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />)}
         </div>
 
@@ -70,14 +67,14 @@ const Sidebar = ({ collapsed }) => {
               className={`nav-sub-item ${isActive('/ict/employee') ? 'active' : ''}`}
             >
               <FaUsers size={14} />
-              <span>የሰራተኛ መረጃ</span>
+              <span>{t('employeeData')}</span>
             </NavLink>
             <NavLink 
               to="/ict/user" 
               className={`nav-sub-item ${isActive('/ict/user') ? 'active' : ''}`}
             >
               <FaUser size={14} />
-              <span>የተጠቃሚ መረጃ</span>
+              <span>{t('userData')}</span>
             </NavLink>
           </>
         )}

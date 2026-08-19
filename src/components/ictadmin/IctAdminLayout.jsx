@@ -5,7 +5,8 @@ import {
   FaChevronDown, FaChevronRight 
 } from 'react-icons/fa';
 import Header from '../common/Header';
-import addisLogo from '../../assets/images/addis-logo.png';   // ← ADDED: logo import
+import addisLogo from '../../assets/images/addis-logo.png';
+import { useLanguage } from '../../context/LanguageContext';
 
 const initialEmployees = [
   { id: 1, fullName: 'አስቴር አለሙ', idNumber: 'REV-001', jobCategory: 'ICT Administrator', taxCenter: 'አዲስ አበባ ቅዱስ ጊዮርጊስ', status: 'Active', createdAt: '2024-01-15', updatedAt: '2024-01-15' },
@@ -16,52 +17,49 @@ const IctAdminLayout = () => {
   const [employeesExpanded, setEmployeesExpanded] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [employees, setEmployees] = useState(initialEmployees);
+  const { t } = useLanguage();
 
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
 
   return (
     <div className="ictadmin-container">
-      {/* === HEADER – FULL WIDTH AT THE TOP === */}
       <Header 
-        // title="ICT አስተዳዳሪ" 
+        title={t('ictAdmin')} 
         toggleSidebar={toggleSidebar} 
       />
 
-      {/* === MAIN ROW – SIDEBAR + CONTENT === */}
       <div className="ictadmin-main">
         {/* Sidebar */}
         <div className={`ictadmin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
           <div className="ictadmin-brand">
             <img src={addisLogo} alt="Addis Ababa Revenues Bureau" />
-            {/* {!sidebarCollapsed && <h3>ICT አስተዳዳሪ</h3>} */}
-            <div className="ictadmin-welcome-text">የአሰሳ ምናሌ</div>
-            
+            <div className="ictadmin-welcome-text">{t('navMenu')}</div>
           </div>
           <nav className="ictadmin-nav">
             <NavLink to="dashboard" className={({ isActive }) => `ictadmin-nav-item ${isActive ? 'active' : ''}`}>
-              <FaHome /> {!sidebarCollapsed && 'ዳሽቦርድ'}
+              <FaHome /> {!sidebarCollapsed && t('dashboard')}
             </NavLink>
             <NavLink to="bankaccounts" className={({ isActive }) => `ictadmin-nav-item ${isActive ? 'active' : ''}`}>
-              <FaUniversity /> {!sidebarCollapsed && 'የባንክ መለያዎች'}
+              <FaUniversity /> {!sidebarCollapsed && t('bankAccounts')}
             </NavLink>
 
             <div className="ictadmin-nav-item ictadmin-nav-parent" onClick={() => setEmployeesExpanded(!employeesExpanded)}>
-              <FaUsers /> {!sidebarCollapsed && 'ሰራተኞች'}
+              <FaUsers /> {!sidebarCollapsed && t('employees')}
               {!sidebarCollapsed && (employeesExpanded ? <FaChevronDown /> : <FaChevronRight />)}
             </div>
             {employeesExpanded && !sidebarCollapsed && (
               <>
                 <NavLink to="employees/employee-data" className={({ isActive }) => `ictadmin-nav-subitem ${isActive ? 'active' : ''}`}>
-                  <FaUser /> የሰራተኛ መረጃ
+                  <FaUser /> {t('employeeData')}
                 </NavLink>
                 <NavLink to="employees/user-data" className={({ isActive }) => `ictadmin-nav-subitem ${isActive ? 'active' : ''}`}>
-                  <FaUser /> የተጠቃሚ መረጃ
+                  <FaUser /> {t('userData')}
                 </NavLink>
               </>
             )}
 
             <NavLink to="taxpayers" className={({ isActive }) => `ictadmin-nav-item ${isActive ? 'active' : ''}`}>
-              <FaFileInvoice /> {!sidebarCollapsed && 'ግብር ከፋዮች'}
+              <FaFileInvoice /> {!sidebarCollapsed && t('taxPayers')}
             </NavLink>
           </nav>
         </div>

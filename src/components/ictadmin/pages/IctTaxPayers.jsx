@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTaxCenters } from '../../../context/TaxCenterContext';
+import { useLanguage } from '../../../context/LanguageContext';
 import Tooltip from '../../common/Tooltip';
 
 const IctTaxPayers = () => {
   const { taxCenters } = useTaxCenters();
+  const { t, tData } = useLanguage();
   
   // ============================================
   // STATE
@@ -88,14 +90,14 @@ const IctTaxPayers = () => {
   const getViewFields = (tp) => {
     if (!tp) return [];
     return [
-      { label: 'ስም', value: tp.name },
-      { label: 'ታክስ ከፋይ መለያ (TIN)', value: tp.tin },
-      { label: 'ስልክ ቁጥር', value: tp.phone },
-      { label: 'የድርጅት ዓይነት', value: tp.orgType },
-      { label: 'ታክስ ማእከል', value: tp.taxCenter },
-      { label: 'ሁኔታ', value: tp.isActive ? 'ንቁ' : 'ተቋርጧል' },
-      { label: 'የተመዘገበበት ቀን', value: tp.createdAt || 'N/A' },
-      { label: 'የተሻሻለበት ቀን', value: tp.updatedAt || 'N/A' },
+      { label: t('fullName'), value: tData(tp.name) },
+      { label: t('tinNumber'), value: tp.tin },
+      { label: t('phoneNumber'), value: tp.phone },
+      { label: t('orgType'), value: tData(tp.orgType) },
+      { label: t('taxCenter'), value: tData(tp.taxCenter) },
+      { label: t('status'), value: tData(tp.isActive ? 'ንቁ' : 'ተቋርጧል') },
+      { label: t('createdAt'), value: tp.createdAt || 'N/A' },
+      { label: t('updatedAt'), value: tp.updatedAt || 'N/A' },
     ];
   };
 
@@ -278,22 +280,22 @@ const IctTaxPayers = () => {
         <div className="frame-header">
           <div className="frame-actions">
             <button className="btn btn-primary" onClick={openRegister}>
-              <FaPlus /> አዲስ መዝገብ
+              <FaPlus /> {t('addRecord')}
             </button>
-            <span className="total-count">ጠቅላላ: {taxPayers.length}</span>
+            <span className="total-count">{t('total')}: {taxPayers.length}</span>
           </div>
-          <div className="frame-title">🧾 ግብር ከፋዮች</div>
+          <div className="frame-title">{t('taxPayersTitle')}</div>
         </div>
 
         {/* SEARCH AREA */}
         <div className="taxpayer-search-area">
           <div className="search-wrapper">
-            <span className="search-label">Search:</span>
+            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
               <input
                 type="text"
-                placeholder="Search by name, TIN, or phone"
+                placeholder={t('searchTaxpayerPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -305,7 +307,7 @@ const IctTaxPayers = () => {
           <div className={`taxpayer-line ${lineColor}`}></div>
           {!hasSearch && (
             <div className="taxpayer-hint">
-              <span>🔍 Search by tax payer name, tax identity number, or phone number or register new tax payer</span>
+              <span>{t('searchTaxpayerHint')}</span>
             </div>
           )}
         </div>
@@ -316,14 +318,14 @@ const IctTaxPayers = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>የግብር ከፋይ ስም</th>
-                <th>የግብር ከፋይ መለያ ቁጥር</th>
-                <th>ስልክ ቁጥር</th>
-                <th>የ ድርጅቱ አይነት</th>
-                <th>ታክስ ማዕከል</th>
+                <th>{t('taxPayerName')}</th>
+                <th>{t('tinNumber')}</th>
+                <th>{t('phoneNumber')}</th>
+                <th>{t('orgType')}</th>
+                <th>{t('taxCenter')}</th>
+                <th>{t('status')}</th>
                 <th></th>
-                <th></th>
-                <th></th>
+                <th>{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -332,95 +334,54 @@ const IctTaxPayers = () => {
                 return (
                   <tr key={tp.id}>
                     <td>{startIndex + idx + 1}</td>
-                    <td><strong>{tp.name}</strong></td>
+                    <td><strong>{tData(tp.name)}</strong></td>
                     <td>{tp.tin}</td>
                     <td>{tp.phone}</td>
-                    <td>{tp.orgType}</td>
-                    <td>{tp.taxCenter}</td>
+                    <td>{tData(tp.orgType)}</td>
+                    <td>{tData(tp.taxCenter)}</td>
                     <td>
                       <span className={`status-badge ${tp.isActive ? 'active' : 'inactive'}`}>
-                        {tp.isActive ? 'ንቁ' : 'ተቋርጧል'}
+                        {tData(tp.isActive ? 'ንቁ' : 'ተቋርጧል')}
                       </span>
                     </td>
                     <td>
-                                              <div className="table-actions" style={{ justifyContent: 'center' }}>
-                                                {!identityCreated ? (
-                                                  <button 
-                                                    className="identity-btn create-btn" 
-                                                    onClick={() => openIdentityModal(tp)}
-                                                  >
-                                                    መለያ ይፍጠሩ
-                                                  </button>
-                                                ) : (
-                                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <div className="tooltip-wrapper">
-                                                      <button 
-                                                        className="identity-btn status-btn"
-                                                        style={{ cursor: 'default' }}
-                                                      >
-                                                        የተጠቃሚ መለያ ተፈጥሯል
-                                                      </button>
-                                                      <div className="custom-tooltip">
-                                                        ለዚህ ሰራተኛ አስቀድሞ የተጠቃሚ መለያ ተፈጥሯል።
-                                                      </div>
-                                                    </div>
-                                                    <button 
-                                                      className="action-btn delete" 
-                                                      title="መለያ ሰርዝ"
-                                                      onClick={() => handleDeleteIdentity(tp.id)}
-                                                    >
-                                                      <FaTrash />
-                                                    </button>
-                                                  </div>
-                                                )}
-                                           </div>
-                    </td>
-                    <td>
-                      <div className="table-actions">
-                        <button className="action-btn view" onClick={() => openView(tp)}><FaEye /></button>
-                        <button className="action-btn edit" onClick={() => openEdit(tp)}><FaEdit /></button>
-                        <button className="action-btn delete" onClick={() => openDelete(tp)}><FaTrash /></button>
-                        {/* {!identityCreated ? (
-                          <button
-                            className="action-btn edit"
+                      <div className="table-actions" style={{ justifyContent: 'center' }}>
+                        {!identityCreated ? (
+                          <button 
+                            className="identity-btn create-btn" 
                             onClick={() => openIdentityModal(tp)}
-                            title="መለያ ፍጠር"
                           >
-                            <FaPlus />
+                            {t('createAccount')}
                           </button>
                         ) : (
-                          <>
-                            <div
-                              className="tooltip-container"
-                              onMouseEnter={handleMouseEnter}
-                              onMouseLeave={handleMouseLeave}
-                              ref={tooltipRef}
-                              style={{ display: 'inline-block' }}
-                            >
-                              <button
-                                className="action-btn view"
-                                style={{ color: '#27ae60', cursor: 'default' }}
-                                title="መለያ ተፈጥሯል"
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="tooltip-wrapper">
+                              <button 
+                                className="identity-btn status-btn"
+                                style={{ cursor: 'default' }}
                               >
-                                <FaCheck />
+                                {t('accountCreated')}
                               </button>
-                              <Tooltip
-                                targetRef={tooltipRef}
-                                visible={showTooltip}
-                                message="የተጠቃሚ መለያ ቀድሞ ተፈጥሯል"
-                                offset={12}
-                              />
+                              <div className="custom-tooltip">
+                                {t('accountCreatedTooltip')}
+                              </div>
                             </div>
-                            <button
-                              className="action-btn delete"
+                            <button 
+                              className="action-btn delete" 
+                              title={t('deleteAccount')}
                               onClick={() => handleDeleteIdentity(tp.id)}
-                              title="መለያ ሰርዝ"
                             >
                               <FaTrash />
                             </button>
-                          </>
-                        )} */}
-
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                    <td>
+                      <div className="table-actions">
+                        <button className="action-btn view" title={t('view')} onClick={() => openView(tp)}><FaEye /></button>
+                        <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(tp)}><FaEdit /></button>
+                        <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(tp)}><FaTrash /></button>
                       </div>
                     </td>
                   </tr>
@@ -428,9 +389,9 @@ const IctTaxPayers = () => {
               })}
               {currentData.length === 0 && (
                 <tr>
-                  <td colSpan="8" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
+                  <td colSpan="9" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
                     <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-                    DATA NOT AVAILABLE
+                    {t('noData')}
                   </td>
                 </tr>
               )}
@@ -442,78 +403,76 @@ const IctTaxPayers = () => {
         {filteredData.length > 0 && (
           <div className="pagination">
             <span className="pagination-info">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length}
+              {t('showing')} {startIndex + 1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}
             </span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>First</button>
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>Previous</button>
-            <span className="page-indicator">Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>Next</button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>Last</button>
+            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>{t('first')}</button>
+            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>{t('previous')}</button>
+            <span className="page-indicator">{t('page')} {currentPage} {t('of')} {totalPages}</span>
+            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>{t('next')}</button>
+            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>{t('last')}</button>
           </div>
         )}
       </div>
 
       {/* ============================================
-          REGISTER MODAL (UPDATED – only 8 fields, two per row)
+          REGISTER MODAL
           ============================================ */}
       {showRegister && (
         <div className="modal-overlay" onClick={closeRegister}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-title"><FaPlus className="modal-icon" /> አዲስ ግብር ከፋይ</div>
+              <div className="modal-title"><FaPlus className="modal-icon" /> {t('newTaxPayer')}</div>
             </div>
             <div className="modal-body">
               <form onSubmit={handleRegister}>
                 <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
-                  {/* Full width: Name */}
                   <div className="form-group full-width">
-                    <label>ሙሉ ስም *</label>
+                    <label>{t('fullName')} *</label>
                     <input name="name" value={formData.name} onChange={handleChange} required />
                   </div>
-                  {/* Two columns for the rest */}
                   <div className="form-group">
-                    <label>ታክስ መለያ ቁጥር (TIN) *</label>
+                    <label>{t('tinNumber')} *</label>
                     <input name="tin" value={formData.tin} onChange={handleChange} required />
                   </div>
                   <div className="form-group">
-                    <label>የሽያጭ መለያ ኮድ (MRC)</label>
+                    <label>{t('mrc')}</label>
                     <input name="sellsIdentityCode" value={formData.sellsIdentityCode} onChange={handleChange} />
                   </div>
                   <div className="form-group">
-                    <label>የድርጅት ዓይነት *</label>
-                    <select style={{ width: '100%',border:'none' }} name="orgType" value={formData.orgType} onChange={handleChange} required>
-                      <option value=""> </option>
-                      <option value="ኅላፊነቱ የተወሰነ ይግል ማህበር">ኅላፊነቱ የተወሰነ ይግል ማህበር</option>
-                      <option value="ህብረት ስራ">ህብረት ስራ</option>
-                      <option value="ሽርክና">ሽርክና</option>
-                      <option value="አክሲዎን">አክሲዎን</option>
-                      <option value="ክልላዊ">ክልላዊ</option>
-                      <option value="NGO">NGO</option>
-                      <option value="የግል">Personal</option>
+                    <label>{t('orgType')} *</label>
+                    <select style={{ width: '100%', border: 'none' }} name="orgType" value={formData.orgType} onChange={handleChange} required>
+                      <option value="">{t('select')}</option>
+                      <option value="ኅላፊነቱ የተወሰነ ይግል ማህበር">{tData('ኅላፊነቱ የተወሰነ ይግል ማህበር')}</option>
+                      <option value="ህብረት ስራ">{tData('ህብረት ስራ')}</option>
+                      <option value="ሽርክና">{tData('ሽርክና')}</option>
+                      <option value="አክሲዎን">{tData('አክሲዎን')}</option>
+                      <option value="ክልላዊ">{tData('ክልላዊ')}</option>
+                      <option value="NGO">{tData('NGO')}</option>
+                      <option value="የግል">{tData('የግል')}</option>
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>የታክስ መጠን (Turnover Tax)</label>
+                    <label>{t('turnoverTax')}</label>
                     <input name="turnoverTax" value={formData.turnoverTax} onChange={handleChange} type="number" step="0.01" />
                   </div>
                   <div className="form-group">
-                    <label>የንዑስ መለያ ቁጥር</label>
+                    <label>{t('subIdentity')}</label>
                     <input name="subIdentityNumber" value={formData.subIdentityNumber} onChange={handleChange} />
                   </div>
                   <div className="form-group">
-                    <label>የሥራ ዓይነት</label>
+                    <label>{t('jobType')}</label>
                     <input name="jobType" value={formData.jobType} onChange={handleChange} />
                   </div>
                   <div className="form-group">
-                    <label>ስልክ ቁጥር *</label>
+                    <label>{t('phoneNumber')} *</label>
                     <input name="phone" value={formData.phone} onChange={handleChange} required />
                   </div>
                 </div>
                 <div className="modal-actions">
                   <button type="submit" className="btn-btn-success" disabled={loading}>
-                    {loading ? 'በመመዝገብ ላይ...' : 'ይመዝገቡ'}
+                    {loading ? t('registering') : t('register')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeRegister}>ሰርዝ</button>
+                  <button type="button" className="btn-btn-secondary" onClick={closeRegister}>{t('cancel')}</button>
                 </div>
               </form>
             </div>
@@ -528,8 +487,8 @@ const IctTaxPayers = () => {
         <div className="modal-overlay" onClick={closeActionModal}>
           <div className="modal-content view-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2c3e50, #3498db)' }}>
-              <div className="modal-title"><FaEye className="modal-icon" /> ዝርዝር መረጃ</div>
-              <button className="modal-close-btn" onClick={closeActionModal}><FaTimes /></button>
+              <div className="modal-title"><FaEye className="modal-icon" /> {t('details')}</div>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body view-modal-body">
               <div className="view-field-grid">
@@ -550,18 +509,18 @@ const IctTaxPayers = () => {
               {usePagination && totalViewPages > 1 && (
                 <div className="view-pagination">
                   <button onClick={() => setViewPage(prev => Math.max(prev - 1, 1))} disabled={viewPage === 1}>
-                    Previous
+                    {t('previous')}
                   </button>
-                  <span>ገጽ {viewPage} ከ {totalViewPages}</span>
+                  <span>{t('page')} {viewPage} {t('of')} {totalViewPages}</span>
                   <button onClick={() => setViewPage(prev => Math.min(prev + 1, totalViewPages))} disabled={viewPage === totalViewPages}>
-                    Next
+                    {t('next')}
                   </button>
                 </div>
               )}
             </div>
             <div className="view-modal-footer">
               <button type="button" className="btn-cancel-red" onClick={closeActionModal}>
-                ዝጋ
+                {t('close')}
               </button>
             </div>
           </div>
@@ -569,43 +528,41 @@ const IctTaxPayers = () => {
       )}
 
       {/* ============================================
-          EDIT MODAL (unchanged)
+          EDIT MODAL
           ============================================ */}
       {modalType === 'edit' && selectedTaxPayer && (
         <div className="modal-overlay" onClick={closeActionModal}>
           <div className="modal-content edit-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <div className="modal-title"><FaEdit className="modal-icon" /> አርትዕ</div>
-              <button className="modal-close-btn" onClick={closeActionModal}><FaTimes /></button>
+              <div className="modal-title"><FaEdit className="modal-icon" /> {t('edit')}</div>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleEdit}>
                 <div className="form-grid">
-                  <div className="form-group full-width"><label>Name *</label><input name="name" value={editFormData.name} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>TIN *</label><input name="tin" value={editFormData.tin} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>Phone *</label><input name="phone" value={editFormData.phone} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>Org Type *</label><input name="orgType" value={editFormData.orgType} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>Tax Center *</label>
+                  <div className="form-group full-width"><label>{t('fullName')} *</label><input name="name" value={editFormData.name} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('tinNumber')} *</label><input name="tin" value={editFormData.tin} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('phoneNumber')} *</label><input name="phone" value={editFormData.phone} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('orgType')} *</label><input name="orgType" value={editFormData.orgType} onChange={handleEditChange} required /></div>
+                  <div className="form-group"><label>{t('taxCenter')} *</label>
                     <select name="taxCenter" value={editFormData.taxCenter} onChange={handleEditChange} required>
-                      <option value="" style={{width: '100%', border: 'none' }}>
-                        ""
-                      </option>
-                      {taxCenters.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                      <option value="">{t('select')}</option>
+                      {taxCenters.map(c => <option key={c.id} value={c.name}>{tData(c.name)}</option>)}
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>Active</label>
+                    <label>{t('status')}</label>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '8px' }}>
                       <input type="checkbox" name="isActive" checked={editFormData.isActive} onChange={handleEditChange} />
-                      <span>{editFormData.isActive ? 'ንቁ' : 'ተቋርጧል'}</span>
+                      <span>{tData(editFormData.isActive ? 'ንቁ' : 'ተቋርጧል')}</span>
                     </div>
                   </div>
                 </div>
                 <div className="modal-actions">
                   <button type="submit" className="btn-btn-success" disabled={loading}>
-                    {loading ? '...' : 'ለውጦችን መዝግብ'}
+                    {loading ? t('saving') : t('saveChanges')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>ዝጋ</button>
+                  <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>{t('close')}</button>
                 </div>
               </form>
             </div>
@@ -620,16 +577,16 @@ const IctTaxPayers = () => {
         <div className="modal-overlay" onClick={closeActionModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
-              <div className="modal-title"><FaTrash className="modal-icon" /> ማስጠንቀቂያ</div>
-              <button className="modal-close-btn" onClick={closeActionModal}><FaTimes /></button>
+              <div className="modal-title"><FaTrash className="modal-icon" /> {t('warning')}</div>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body" style={{ textAlign: 'center', padding: '30px' }}>
               <div style={{ fontSize: '48px', color: '#e74c3c' }}>⚠️</div>
-              <h3 style={{ color: '#e74c3c' }}>እርግጠኛ ነዎት መሰረዝ ይፈልጋሉ?</h3>
-              <p><strong>{selectedTaxPayer.name}</strong> ({selectedTaxPayer.tin})</p>
+              <h3 style={{ color: '#e74c3c' }}>{t('confirmDelete')}</h3>
+              <p><strong>{tData(selectedTaxPayer.name)}</strong> ({selectedTaxPayer.tin})</p>
               <div className="modal-actions" style={{ justifyContent: 'center', background: 'transparent', borderTop: 'none', marginTop: '20px' }}>
-                <button className="btn-btn-danger" onClick={handleDelete} disabled={loading} style={{ background: '#e74c3c', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>ሰርዝ</button>
-                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>ሰርዝ</button>
+                <button className="btn-btn-danger" onClick={handleDelete} disabled={loading} style={{ background: '#e74c3c', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('delete')}</button>
+                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('cancel')}</button>
               </div>
             </div>
           </div>
@@ -643,34 +600,34 @@ const IctTaxPayers = () => {
         <div className="modal-overlay" onClick={closeIdentityModal}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2ecc71, #27ae60)' }}>
-              <div className="modal-title"><FaPlus className="modal-icon" /> መለያ ይፍጠሩ</div>
-              <button className="modal-close-btn" onClick={closeIdentityModal}><FaTimes /></button>
+              <div className="modal-title"><FaPlus className="modal-icon" /> {t('createAccount')}</div>
+              <button className="modal-close-btn" onClick={closeIdentityModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleCreateIdentity}>
                 <div className="form-grid">
                   <div className="form-group full-width">
-                    <label>ሙሉ ስም</label>
-                    <input type="text" value={selectedIdentity.name} disabled style={{ background: '#f1f5f9' }} />
+                    <label>{t('fullName')}</label>
+                    <input type="text" value={tData(selectedIdentity.name)} disabled style={{ background: '#f1f5f9' }} />
                   </div>
                   <div className="form-group full-width">
-                    <label>Username *</label>
+                    <label>{t('username')} *</label>
                     <input type="text" name="username" value={identityForm.username} onChange={handleIdentityChange} required autoFocus />
                   </div>
                   <div className="form-group full-width">
-                    <label>Password *</label>
+                    <label>{t('password')} *</label>
                     <input type="password" name="password" value={identityForm.password} onChange={handleIdentityChange} required />
                   </div>
                   <div className="form-group full-width">
-                    <label>Confirm Password *</label>
+                    <label>{t('confirmPassword')} *</label>
                     <input type="password" name="confirmPassword" value={identityForm.confirmPassword} onChange={handleIdentityChange} required />
                   </div>
                 </div>
                 <div className="modal-actions">
                   <button type="submit" className="btn-btn-success" disabled={loading}>
-                    {loading ? 'በመፍጠር ላይ...' : 'አስቀምጥ'}
+                    {loading ? t('creating') : t('save')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeIdentityModal}>ሰርዝ</button>
+                  <button type="button" className="btn-btn-secondary" onClick={closeIdentityModal}>{t('cancel')}</button>
                 </div>
               </form>
             </div>

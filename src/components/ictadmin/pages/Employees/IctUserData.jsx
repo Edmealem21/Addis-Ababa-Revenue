@@ -3,9 +3,11 @@ import React, { useState, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FaSearch, FaPlus, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
+import { useLanguage } from '../../../../context/LanguageContext';
 import Tooltip from '../../../common/Tooltip';
 
 const IctUserData = () => {
+  const { t, tData } = useLanguage();
   const { employees, setEmployees } = useOutletContext();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -81,23 +83,23 @@ const IctUserData = () => {
       <div className="data-container">
         <div className="frame-header">
           <div className="frame-actions">
-            <span className="total-count">ጠቅላላ: {employees.length} ተጠቃሚዎች</span>
+            <span className="total-count">{t('total')}: {employees.length} {t('users')}</span>
           </div>
-          <div className="frame-title">👤 የተጠቃሚ መረጃ</div>
+          <div className="frame-title">{t('userDataTitle')}</div>
         </div>
         <div className="data-controls">
           <div className="per-page">
-            <span>Display</span>
+            <span>{t('display')}</span>
             <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
               <option value={1}>1</option><option value={2}>2</option><option value={5}>5</option><option value={10}>10</option>
             </select>
-            <span>per page</span>
+            <span>{t('perPage')}</span>
           </div>
           <div className="search-wrapper">
-            <span className="search-label">Search:</span>
+            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
-              <input type="text" placeholder="ፈልግ..." value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
+              <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
             </div>
           </div>
         </div>
@@ -106,11 +108,11 @@ const IctUserData = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>ሙሉ ስም</th>
-                <th>የመታወቂያ ቁጥር</th>
-                <th>የስራ መደብ</th>
-                <th>የታክስ ማእከል</th>
-                <th>ድርጊቶች</th>
+                <th>{t('fullName')}</th>
+                <th>{t('idNumber')}</th>
+                <th>{t('jobCategory')}</th>
+                <th>{t('taxCenter')}</th>
+                <th>{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -119,10 +121,10 @@ const IctUserData = () => {
                 return (
                   <tr key={emp.id}>
                     <td>{startIndex + idx + 1}</td>
-                    <td><strong>{emp.fullName}</strong></td>
+                    <td><strong>{tData(emp.fullName)}</strong></td>
                     <td>{emp.idNumber}</td>
-                    <td>{emp.jobCategory}</td>
-                    <td>{emp.taxCenter}</td>
+                    <td>{tData(emp.jobCategory)}</td>
+                    <td>{tData(emp.taxCenter)}</td>
                     <td>
                       <div className="table-actions" style={{ justifyContent: 'center' }}>
                         {!identityCreated ? (
@@ -130,7 +132,7 @@ const IctUserData = () => {
                             className="identity-btn create-btn" 
                             onClick={() => openIdentityModal(emp)}
                           >
-                            መለያ ይፍጠሩ
+                            {t('createAccount')}
                           </button>
                         ) : (
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
@@ -139,15 +141,15 @@ const IctUserData = () => {
                                 className="identity-btn status-btn"
                                 style={{ cursor: 'default' }}
                               >
-                                የተጠቃሚ መለያ ተፈጥሯል
+                                {t('accountCreated')}
                               </button>
                               <div className="custom-tooltip">
-                                ለዚህ ሰራተኛ አስቀድሞ የተጠቃሚ መለያ ተፈጥሯል።
+                                {t('accountCreatedTooltip')}
                               </div>
                             </div>
                             <button 
                               className="action-btn delete" 
-                              title="መለያ ሰርዝ"
+                              title={t('deleteAccount')}
                               onClick={() => handleDeleteIdentity(emp.id)}
                             >
                               <FaTrash />
@@ -159,18 +161,18 @@ const IctUserData = () => {
                   </tr>
                 );
               })}
-              {currentData.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>DATA NOT AVAILABLE</td></tr>}
+              {currentData.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>{t('noData')}</td></tr>}
             </tbody>
           </table>
         </div>
         {filteredData.length > 0 && (
           <div className="pagination">
-            <span className="pagination-info">Showing {startIndex+1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length}</span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage===1}>First</button>
-            <button onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage===1}>Previous</button>
-            <span className="page-indicator">Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage===totalPages}>Next</button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage===totalPages}>Last</button>
+            <span className="pagination-info">{t('showing')} {startIndex+1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}</span>
+            <button onClick={() => setCurrentPage(1)} disabled={currentPage===1}>{t('first')}</button>
+            <button onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage===1}>{t('previous')}</button>
+            <span className="page-indicator">{t('page')} {currentPage} {t('of')} {totalPages}</span>
+            <button onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage===totalPages}>{t('next')}</button>
+            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage===totalPages}>{t('last')}</button>
           </div>
         )}
       </div>
@@ -180,20 +182,20 @@ const IctUserData = () => {
         <div className="modal-overlay" onClick={closeIdentityModal}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2ecc71, #27ae60)' }}>
-              <div className="modal-title"><FaPlus className="modal-icon" /> መለያ ይፍጠሩ</div>
-              <button className="modal-close-btn" onClick={closeIdentityModal}><FaTimes /></button>
+              <div className="modal-title"><FaPlus className="modal-icon" /> {t('createAccount')}</div>
+              <button className="modal-close-btn" onClick={closeIdentityModal} title={t('close')}><FaTimes /></button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleCreateIdentity}>
                 <div className="form-grid">
-                  <div className="form-group full-width"><label>ሙሉ ስም</label><input type="text" value={selectedEmployee.fullName} disabled style={{ background: '#f1f5f9' }} /></div>
-                  <div className="form-group full-width"><label>Username *</label><input name="username" value={identityForm.username} onChange={handleIdentityChange} required autoFocus /></div>
-                  <div className="form-group full-width"><label>Password *</label><input type="password" name="password" value={identityForm.password} onChange={handleIdentityChange} required /></div>
-                  <div className="form-group full-width"><label>Confirm Password *</label><input type="password" name="confirmPassword" value={identityForm.confirmPassword} onChange={handleIdentityChange} required /></div>
+                  <div className="form-group full-width"><label>{t('fullName')}</label><input type="text" value={tData(selectedEmployee.fullName)} disabled style={{ background: '#f1f5f9' }} /></div>
+                  <div className="form-group full-width"><label>{t('username')} *</label><input name="username" value={identityForm.username} onChange={handleIdentityChange} required autoFocus /></div>
+                  <div className="form-group full-width"><label>{t('password')} *</label><input type="password" name="password" value={identityForm.password} onChange={handleIdentityChange} required /></div>
+                  <div className="form-group full-width"><label>{t('confirmPassword')} *</label><input type="password" name="confirmPassword" value={identityForm.confirmPassword} onChange={handleIdentityChange} required /></div>
                 </div>
                 <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>{loading ? '...' : 'አስቀምጥ'}</button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeIdentityModal}>ሰርዝ</button>
+                  <button type="submit" className="btn-btn-success" disabled={loading}>{loading ? t('creating') : t('save')}</button>
+                  <button type="button" className="btn-btn-secondary" onClick={closeIdentityModal}>{t('cancel')}</button>
                 </div>
               </form>
             </div>

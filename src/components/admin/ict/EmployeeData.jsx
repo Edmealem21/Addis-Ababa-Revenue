@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
+import { useLanguage } from '../../../context/LanguageContext';
 import Tooltip from '../../common/Tooltip';
 
 // Sample data for first run
@@ -39,6 +40,7 @@ const getSampleEmployees = () => [
 ];
 
 const EmployeeData = () => {
+  const { t, tData } = useLanguage();
   const STORAGE_KEY = 'employeesData';
 
   // Safely get outlet context (may be undefined if not nested)
@@ -65,7 +67,7 @@ const EmployeeData = () => {
   }, [employees, setOutletEmployees]);
 
   // ============================================
-  // STATE (rest unchanged)
+  // STATE
   // ============================================
   const [showModal, setShowModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -97,7 +99,7 @@ const EmployeeData = () => {
   const rowsPerPage = 2;
 
   // ============================================
-  // HANDLERS (unchanged)
+  // HANDLERS
   // ============================================
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -152,7 +154,7 @@ const EmployeeData = () => {
   };
 
   // ============================================
-  // CRUD OPERATIONS (using the local setEmployees)
+  // CRUD OPERATIONS
   // ============================================
   const handleRegister = (e) => {
     e.preventDefault();
@@ -215,7 +217,7 @@ const EmployeeData = () => {
   };
 
   // ============================================
-  // FILTER & MAIN PAGINATION (unchanged)
+  // FILTER & MAIN PAGINATION
   // ============================================
   const filteredData = employees.filter(item =>
     item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -230,18 +232,18 @@ const EmployeeData = () => {
   if (currentPage > totalPages) setCurrentPage(totalPages);
 
   // ============================================
-  // VIEW MODAL – ORDER (unchanged)
+  // VIEW MODAL – ORDER
   // ============================================
   const getViewFields = (emp) => {
     if (!emp) return [];
     return [
-      { label: 'ሙሉ ስም', value: emp.fullName },
-      { label: 'መለያ ቁጥር', value: emp.idNumber },
-      { label: 'ታክስ ማእከል', value: emp.taxCenter },
-      { label: 'ሚና', value: emp.role || 'Officer' },
-      { label: 'ሁኔታ', value: emp.status || 'Active' },
-      { label: 'የተመዘገበበት ቀን', value: emp.createdAt || 'N/A' },
-      { label: 'የተሻሻለበት ቀን', value: emp.updatedAt || 'N/A' },
+      { label: t('fullName'), value: tData(emp.fullName) },
+      { label: t('idNumber'), value: emp.idNumber },
+      { label: t('taxCenter'), value: tData(emp.taxCenter) },
+      { label: t('role'), value: tData(emp.role || 'Officer') },
+      { label: t('status'), value: tData(emp.status || 'Active') },
+      { label: t('createdAt'), value: emp.createdAt || 'N/A' },
+      { label: t('updatedAt'), value: emp.updatedAt || 'N/A' },
     ];
   };
 
@@ -262,7 +264,7 @@ const EmployeeData = () => {
   if (viewPage > totalViewPages) setViewPage(totalViewPages);
 
   // ============================================
-  // RENDER (unchanged – only the JSX you provided)
+  // RENDER
   // ============================================
   return (
     <div className="page-content">
@@ -302,27 +304,27 @@ const EmployeeData = () => {
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
               >
-                <FaPlus /> አዲስ መዝገብ
+                <FaPlus /> {t('addRecord')}
               </button>
               <Tooltip
                 targetRef={buttonRef}
                 visible={showTooltip}
-                message="አዲስ ይመዝገቡ"
+                message={t('registerNew')}
                 offset={12}
               />
             </div>
           </div>
           <div className="frame-title">
-            <span style={{ color: '#110505ea' }}>የአይሲቲ አስተዳደር {'\u226B'}  </span>
+            <span style={{ color: '#110505ea' }}>{t('ictAdmin')} {'\u226B'}  </span>
             <span className="frame-icon"></span>
-            የሰራተኛ መረጃ
+            {t('employeeDataTitle')}
           </div>
         </div>
 
         {/* CONTROLS */}
         <div className="data-controls">
           <div className="per-page">
-            <span>Display</span>
+            <span>{t('display')}</span>
             <select 
               value={perPage} 
               onChange={(e) => {
@@ -335,15 +337,15 @@ const EmployeeData = () => {
               <option value={5}>5</option>
               <option value={10}>10</option>
             </select>
-            <span>Data per</span>
+            <span>{t('perPage')}</span>
           </div>
           <div className="search-wrapper">
-            <span className="search-label">Search:</span>
+            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
               <input
                 type="text"
-                placeholder="ፈልግ..."
+                placeholder={t('searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
@@ -360,38 +362,38 @@ const EmployeeData = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>ሙሉ ስም</th>
-                <th>መለያ ቁጥር</th>
-                <th>ታክስ ማእከል</th>
-                <th>ድርጊቶች</th>
+                <th>{t('fullName')}</th>
+                <th>{t('idNumber')}</th>
+                <th>{t('taxCenter')}</th>
+                <th>{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
               {currentData.map((employee, index) => (
                 <tr key={employee.id}>
                   <td>{startIndex + index + 1}</td>
-                  <td><strong>{employee.fullName}</strong></td>
+                  <td><strong>{tData(employee.fullName)}</strong></td>
                   <td>{employee.idNumber}</td>
-                  <td>{employee.taxCenter}</td>
+                  <td>{tData(employee.taxCenter)}</td>
                   <td>
                     <div className="table-actions">
                       <button 
                         className="action-btn view" 
-                        title="ተመልከት"
+                        title={t('view')}
                         onClick={() => openViewModal(employee)}
                       >
                         <FaEye />
                       </button>
                       <button 
                         className="action-btn edit" 
-                        title="አስተካክል"
+                        title={t('edit')}
                         onClick={() => openEditModal(employee)}
                       >
                         <FaEdit />
                       </button>
                       <button 
                         className="action-btn delete" 
-                        title="ሰርዝ"
+                        title={t('delete')}
                         onClick={() => openDeleteModal(employee)}
                       >
                         <FaTrash />
@@ -404,7 +406,7 @@ const EmployeeData = () => {
                 <tr>
                   <td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
                     <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-                    DATA NOT AVAILABLE
+                    {t('noData')}
                   </td>
                 </tr>
               )}
@@ -416,26 +418,26 @@ const EmployeeData = () => {
         {filteredData.length > 0 && (
           <div className="pagination">
             <span className="pagination-info">
-              Showing {filteredData.length === 0 ? 0 : startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length}
+              {t('showing')} {filteredData.length === 0 ? 0 : startIndex + 1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}
             </span>
             <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-              First
+              {t('first')}
             </button>
             <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-              Previous
+              {t('previous')}
             </button>
             <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-              Next
+              {t('next')}
             </button>
             <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
-              Last
+              {t('last')}
             </button>
           </div>
         )}
       </div>
 
       {/* ============================================
-          MODAL - REGISTER (unchanged)
+          MODAL - REGISTER
           ============================================ */}
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
@@ -443,14 +445,14 @@ const EmployeeData = () => {
             <div className="modal-header">
               <div className="modal-title">
                 <FaPlus className="modal-icon" />
-                <span>አዲስ ይመዝገቡ</span>
+                <span>{t('registerNew')}</span>
               </div>
             </div>
             <div className="modal-body">
               <form onSubmit={handleRegister}>
                 <div className="form-grid">
                   <div className="form-group full-width">
-                    <label>ሙሉ ስም <span className="required">*</span></label>
+                    <label>{t('fullName')} <span className="required">*</span></label>
                     <input
                       type="text"
                       name="fullName"
@@ -461,7 +463,7 @@ const EmployeeData = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>መለያ ቁጥር <span className="required">*</span></label>
+                    <label>{t('idNumber')} <span className="required">*</span></label>
                     <input
                       type="text"
                       name="idNumber"
@@ -471,7 +473,7 @@ const EmployeeData = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>ታክስ ማእከል <span className="required">*</span></label>
+                    <label>{t('taxCenter')} <span className="required">*</span></label>
                     <input
                       type="text"
                       name="taxCenter"
@@ -483,10 +485,10 @@ const EmployeeData = () => {
                 </div>
                 <div className="modal-actions">
                   <button type="submit" className="btn-btn-success" disabled={loading}>
-                    {loading ? 'በመመዝገብ ላይ...' : 'ይመዝገቡ'}
+                    {loading ? t('registering') : t('register')}
                   </button>
                   <button type="button" className="btn-btn-secondary" onClick={closeModal}>
-                    ሰርዝ
+                    {t('cancel')}
                   </button>
                 </div>
               </form>
@@ -496,7 +498,7 @@ const EmployeeData = () => {
       )}
 
       {/* ============================================
-          MODAL - VIEW (ORDER: 1→7 as requested)
+          MODAL - VIEW
           ============================================ */}
       {modalType === 'view' && selectedEmployee && (
         <div className="modal-overlay" onClick={closeActionModal}>
@@ -504,9 +506,9 @@ const EmployeeData = () => {
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2c3e50, #3498db)' }}>
               <div className="modal-title">
                 <FaEye className="modal-icon" />
-                <span>ዝርዝር መረጃ</span>
+                <span>{t('details')}</span>
               </div>
-              <button className="modal-close-btn" onClick={closeActionModal}>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}>
                 <FaTimes />
               </button>
             </div>
@@ -531,11 +533,11 @@ const EmployeeData = () => {
               {usePagination && totalViewPages > 1 && (
                 <div className="view-pagination">
                   <button onClick={() => setViewPage(prev => Math.max(prev - 1, 1))} disabled={viewPage === 1}>
-                    Previous
+                    {t('previous')}
                   </button>
-                  <span>ገጽ {viewPage} ከ {totalViewPages}</span>
+                  <span>{t('page')} {viewPage} {t('of')} {totalViewPages}</span>
                   <button onClick={() => setViewPage(prev => Math.min(prev + 1, totalViewPages))} disabled={viewPage === totalViewPages}>
-                    Next
+                    {t('next')}
                   </button>
                 </div>
               )}
@@ -543,7 +545,7 @@ const EmployeeData = () => {
 
             <div className="view-modal-footer">
               <button type="button" className="btn-cancel-red" onClick={closeActionModal}>
-                ዝጋ
+                {t('close')}
               </button>
             </div>
           </div>
@@ -551,7 +553,7 @@ const EmployeeData = () => {
       )}
 
       {/* ============================================
-          MODAL - EDIT (unchanged)
+          MODAL - EDIT
           ============================================ */}
       {modalType === 'edit' && selectedEmployee && (
         <div className="modal-overlay" onClick={closeActionModal}>
@@ -559,9 +561,9 @@ const EmployeeData = () => {
             <div className="modal-header">
               <div className="modal-title">
                 <FaEdit className="modal-icon" />
-                <span>አርትዕ</span>
+                <span>{t('edit')}</span>
               </div>
-              <button className="modal-close-btn" onClick={closeActionModal}>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}>
                 <FaTimes />
               </button>
             </div>
@@ -569,7 +571,7 @@ const EmployeeData = () => {
               <form onSubmit={handleEdit}>
                 <div className="form-grid">
                   <div className="form-group full-width">
-                    <label>ሙሉ ስም <span className="required">*</span></label>
+                    <label>{t('fullName')} <span className="required">*</span></label>
                     <input
                       type="text"
                       name="fullName"
@@ -579,7 +581,7 @@ const EmployeeData = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>መለያ ቁጥር <span className="required">*</span></label>
+                    <label>{t('idNumber')} <span className="required">*</span></label>
                     <input
                       type="text"
                       name="idNumber"
@@ -589,7 +591,7 @@ const EmployeeData = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>ታክስ ማእከል <span className="required">*</span></label>
+                    <label>{t('taxCenter')} <span className="required">*</span></label>
                     <input
                       type="text"
                       name="taxCenter"
@@ -599,36 +601,36 @@ const EmployeeData = () => {
                     />
                   </div>
                   <div className="form-group">
-                    <label>ሚና</label>
+                    <label>{t('role')}</label>
                     <select
                       name="role"
                       value={editFormData.role}
                       onChange={handleEditChange}
                     >
-                      <option value="Authority">Authority</option>
-                      <option value="ICT Administrator">ICT Administrator</option>
-                      <option value="Officer">Officer</option>
+                      <option value="Authority">{tData('Authority')}</option>
+                      <option value="ICT Administrator">{tData('ICT Administrator')}</option>
+                      <option value="Officer">{tData('Officer')}</option>
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>ሁኔታ</label>
+                    <label>{t('status')}</label>
                     <select
                       name="status"
                       value={editFormData.status}
                       onChange={handleEditChange}
                     >
-                      <option value="Active">ንቁ</option>
-                      <option value="Inactive">ተቋርጧል</option>
-                      <option value="Pending">በመጠባበቅ ላይ</option>
+                      <option value="Active">{tData('ንቁ')}</option>
+                      <option value="Inactive">{tData('ተቋርጧል')}</option>
+                      <option value="Pending">{tData('በመጠባበቅ ላይ')}</option>
                     </select>
                   </div>
                 </div>
                 <div className="modal-actions">
                   <button type="submit" className="btn-btn-success">
-                    ለውጦችን መዝግብ
+                    {t('saveChanges')}
                   </button>
                   <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>
-                    ዝጋ
+                    {t('close')}
                   </button>
                 </div>
               </form>
@@ -638,7 +640,7 @@ const EmployeeData = () => {
       )}
 
       {/* ============================================
-          MODAL - DELETE (unchanged)
+          MODAL - DELETE
           ============================================ */}
       {modalType === 'delete' && selectedEmployee && (
         <div className="modal-overlay" onClick={closeActionModal}>
@@ -646,19 +648,19 @@ const EmployeeData = () => {
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
               <div className="modal-title">
                 <FaTrash className="modal-icon" />
-                <span>ማስጠንቀቂያ</span>
+                <span>{t('warning')}</span>
               </div>
-              <button className="modal-close-btn" onClick={closeActionModal}>
+              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}>
                 <FaTimes />
               </button>
             </div>
             <div className="modal-body" style={{ textAlign: 'center', padding: '30px' }}>
               <div style={{ fontSize: '48px', color: '#e74c3c' }}>⚠️</div>
-              <h3 style={{ color: '#e74c3c' }}>እርግጠኛ ነዎት መሰረዝ ይፈልጋሉ?</h3>
-              <p><strong>{selectedEmployee.fullName}</strong> ({selectedEmployee.idNumber})</p>
+              <h3 style={{ color: '#e74c3c' }}>{t('confirmDelete')}</h3>
+              <p><strong>{tData(selectedEmployee.fullName)}</strong> ({selectedEmployee.idNumber})</p>
               <div className="modal-actions" style={{ justifyContent: 'center', background: 'transparent', borderTop: 'none' }}>
-                <button className="btn-btn-danger" onClick={handleDelete} style={{ background: '#e74c3c', color: '#fff' }}>ሰርዝ</button>
-                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff' }}>ሰርዝ</button>
+                <button className="btn-btn-danger" onClick={handleDelete} style={{ background: '#e74c3c', color: '#fff' }}>{t('delete')}</button>
+                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff' }}>{t('cancel')}</button>
               </div>
             </div>
           </div>

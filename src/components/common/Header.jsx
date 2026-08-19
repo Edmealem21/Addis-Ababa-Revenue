@@ -1,28 +1,23 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaBars, FaSignOutAlt, FaKey, FaEdit, FaUser, FaTimes } from 'react-icons/fa';
+import { FaBars, FaKey, FaEdit, FaTimes } from 'react-icons/fa';
 import { AuthContext } from '../../context/AuthContext';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageToggle from './LanguageToggle';
+import ThemeToggle from './ThemeToggle';
 import addisLogo from '../../assets/images/addis-logo.png';
 import toast, { Toaster } from 'react-hot-toast';
 
 const Header = ({ title, toggleSidebar }) => {
-  // ============================================
-  // CONTEXT & NAVIGATION
-  // ============================================
   const { user, logout } = useContext(AuthContext);
+  const { t } = useLanguage();
   const navigate = useNavigate();
 
-  // ============================================
-  // DROPDOWN & POPUP STATES
-  // ============================================
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showProfileSub, setShowProfileSub] = useState(false);
   const [showPasswordPopup, setShowPasswordPopup] = useState(false);
   const [showNamePopup, setShowNamePopup] = useState(false);
 
-  // ============================================
-  // FORM STATES
-  // ============================================
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -31,17 +26,11 @@ const Header = ({ title, toggleSidebar }) => {
   const [nameForm, setNameForm] = useState({ newName: user?.name || '' });
   const [loading, setLoading] = useState(false);
 
-  // ============================================
-  // REFS FOR CLICK OUTSIDE
-  // ============================================
   const dropdownRef = useRef(null);
   const subRef = useRef(null);
   const passwordPopupRef = useRef(null);
   const namePopupRef = useRef(null);
 
-  // ============================================
-  // CLOSE ALL
-  // ============================================
   const closeAll = () => {
     setShowProfileDropdown(false);
     setShowProfileSub(false);
@@ -51,9 +40,6 @@ const Header = ({ title, toggleSidebar }) => {
     setNameForm({ newName: '' });
   };
 
-  // ============================================
-  // CLICK OUTSIDE HANDLERS
-  // ============================================
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -74,26 +60,17 @@ const Header = ({ title, toggleSidebar }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ============================================
-  // TOGGLE PROFILE DROPDOWN
-  // ============================================
   const toggleProfileDropdown = () => {
     setShowProfileDropdown(!showProfileDropdown);
     if (showProfileSub) setShowProfileSub(false);
   };
 
-  // ============================================
-  // TOGGLE PROFILE SUB
-  // ============================================
   const toggleProfileSub = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setShowProfileSub(!showProfileSub);
   };
 
-  // ============================================
-  // OPEN PASSWORD POPUP
-  // ============================================
   const openPasswordPopup = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -102,9 +79,6 @@ const Header = ({ title, toggleSidebar }) => {
     setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
   };
 
-  // ============================================
-  // OPEN NAME POPUP
-  // ============================================
   const openNamePopup = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -113,18 +87,12 @@ const Header = ({ title, toggleSidebar }) => {
     setNameForm({ newName: user?.name || '' });
   };
 
-  // ============================================
-  // HANDLE LOGOUT
-  // ============================================
   const handleLogout = () => {
     logout();
     closeAll();
     navigate('/login');
   };
 
-  // ============================================
-  // HANDLE PASSWORD CHANGE
-  // ============================================
   const handlePasswordChange = (e) => {
     e.preventDefault();
 
@@ -150,9 +118,6 @@ const Header = ({ title, toggleSidebar }) => {
     }, 1000);
   };
 
-  // ============================================
-  // HANDLE NAME CHANGE
-  // ============================================
   const handleNameChange = (e) => {
     e.preventDefault();
 
@@ -170,9 +135,6 @@ const Header = ({ title, toggleSidebar }) => {
     }, 1000);
   };
 
-  // ============================================
-  // RENDER
-  // ============================================
   return (
     <>
       <header className="navbar">
@@ -180,65 +142,60 @@ const Header = ({ title, toggleSidebar }) => {
           <button className="menu-toggle" onClick={toggleSidebar}>
             <FaBars />
           </button>
-          <span className="page-title">{title}</span>
+          <span className="page-title">{title || t('appTitle')}</span>
         </div>
 
         <div className="navbar-right">
-          {/* Admin Profile – Click to toggle dropdown */}
+          {/* Theme & Language Toggles */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
+
+          {/* Admin Profile */}
           <div className="admin-profile" onClick={toggleProfileDropdown}>
             <div className="avatar">
               {user?.name?.charAt(0) || 'A'}
             </div>
-            <span className="admin-name">{user?.name || 'አስተዳዳሪ'}</span>
+            <span className="admin-name">{user?.name || t('admin')}</span>
           </div>
 
-          {/* ============================================
-              PROFILE DROPDOWN – positioned below the profile
-              ============================================ */}
+          {/* Profile Dropdown */}
           {showProfileDropdown && (
             <div className="profile-dropdown" ref={dropdownRef}>
               <div className="profile-dropdown-content">
-                {/* Logo */}
                 <div className="profile-dropdown-logo">
                   <img src={addisLogo} alt="Addis Ababa Revenues Bureau" />
                 </div>
-
-                {/* Job Category */}
                 <div className="profile-dropdown-job">
-                  {user?.jobCategory || 'የተጨማሪ እሴት ታክስ ባለሙያ'}
+                  {user?.jobCategory || t('vatExpert')}
                 </div>
-
-                {/* Full Name */}
                 <div className="profile-dropdown-name">
-                  {user?.name || 'አስተዳዳሪ'}
+                  {user?.name || t('admin')}
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="profile-dropdown-actions">
-                {/* User Profile Button – opens sub-menu */}
                 <div className="profile-btn-wrapper" style={{ width: '50%' }}>
                   <button className="btn-profile-dropdown profile-btn" onClick={toggleProfileSub} style={{ width: '100%' }}>
-                    የግል ማህደር
+                    {t('personalProfile')}
                   </button>
 
-                  {/* Sub-menu */}
                   {showProfileSub && (
                     <div className="profile-sub-dropdown" ref={subRef}>
                       <button className="sub-dropdown-item" onClick={openPasswordPopup}>
-                        <FaKey /> የይለፍ ቃል ቀይር
+                        <FaKey /> {t('changePassword')}
                       </button>
                       <div className="sub-divider"></div>
                       <button className="sub-dropdown-item" onClick={openNamePopup}>
-                        <FaEdit /> ሙሉ ስም ቀይር
+                        <FaEdit /> {t('changeName')}
                       </button>
                     </div>
                   )}
                 </div>
 
-                {/* Logout Button */}
                 <button className="btn-profile-dropdown logout-btn" onClick={handleLogout} style={{ width: '50%' }}>
-                  ዘግተ ውጣ
+                  {t('logout')}
                 </button>
               </div>
             </div>
@@ -246,16 +203,14 @@ const Header = ({ title, toggleSidebar }) => {
         </div>
       </header>
 
-      {/* ============================================
-          CHANGE PASSWORD POPUP (centered modal)
-          ============================================ */}
+      {/* Change Password Popup */}
       {showPasswordPopup && (
         <div className="popup-overlay" onClick={() => setShowPasswordPopup(false)}>
           <div className="popup-card" onClick={(e) => e.stopPropagation()} ref={passwordPopupRef}>
             <div className="popup-header">
               <div className="popup-title">
                 <FaKey className="popup-icon" />
-                <span>የይለፍ ቃል ቀይር</span>
+                <span>{t('changePassword')}</span>
               </div>
               <button className="popup-close" onClick={() => setShowPasswordPopup(false)}>
                 <FaTimes />
@@ -264,10 +219,10 @@ const Header = ({ title, toggleSidebar }) => {
             <div className="popup-body">
               <form onSubmit={handlePasswordChange}>
                 <div className="form-group full-width">
-                  <label>የአሁኑ የይለፍ ቃል <span className="required">*</span></label>
+                  <label>{t('currentPassword')} <span className="required">*</span></label>
                   <input
                     type="password"
-                    placeholder="የአሁኑን የይለፍ ቃል ያስገቡ"
+                    placeholder={t('currentPassword')}
                     value={passwordForm.currentPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
                     required
@@ -275,20 +230,20 @@ const Header = ({ title, toggleSidebar }) => {
                   />
                 </div>
                 <div className="form-group full-width">
-                  <label>አዲስ የይለፍ ቃል <span className="required">*</span></label>
+                  <label>{t('newPassword')} <span className="required">*</span></label>
                   <input
                     type="password"
-                    placeholder="አዲስ የይለፍ ቃል ያስገቡ"
+                    placeholder={t('newPassword')}
                     value={passwordForm.newPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
                     required
                   />
                 </div>
                 <div className="form-group full-width">
-                  <label>አዲስ የይለፍ ቃል አረጋግጥ <span className="required">*</span></label>
+                  <label>{t('confirmPassword')} <span className="required">*</span></label>
                   <input
                     type="password"
-                    placeholder="አዲስ የይለፍ ቃል እንደገና ያስገቡ"
+                    placeholder={t('confirmPassword')}
                     value={passwordForm.confirmPassword}
                     onChange={(e) => setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })}
                     required
@@ -296,10 +251,10 @@ const Header = ({ title, toggleSidebar }) => {
                 </div>
                 <div className="popup-actions">
                   <button type="submit" className="btn btn-success" disabled={loading}>
-                    {loading ? 'በመቀየር ላይ...' : 'ያስቀምጡ'}
+                    {loading ? t('saving') : t('save')}
                   </button>
                   <button type="button" className="btn btn-secondary" onClick={() => setShowPasswordPopup(false)}>
-                    ሰርዝ
+                    {t('cancel')}
                   </button>
                 </div>
               </form>
@@ -308,16 +263,14 @@ const Header = ({ title, toggleSidebar }) => {
         </div>
       )}
 
-      {/* ============================================
-          CHANGE FULL NAME POPUP (centered modal)
-          ============================================ */}
+      {/* Change Name Popup */}
       {showNamePopup && (
         <div className="popup-overlay" onClick={() => setShowNamePopup(false)}>
           <div className="popup-card" onClick={(e) => e.stopPropagation()} ref={namePopupRef}>
             <div className="popup-header">
               <div className="popup-title">
                 <FaEdit className="popup-icon" />
-                <span>ሙሉ ስም ቀይር</span>
+                <span>{t('changeName')}</span>
               </div>
               <button className="popup-close" onClick={() => setShowNamePopup(false)}>
                 <FaTimes />
@@ -326,10 +279,10 @@ const Header = ({ title, toggleSidebar }) => {
             <div className="popup-body">
               <form onSubmit={handleNameChange}>
                 <div className="form-group full-width">
-                  <label>አዲስ ሙሉ ስም <span className="required">*</span></label>
+                  <label>{t('newFullName')} <span className="required">*</span></label>
                   <input
                     type="text"
-                    placeholder="አዲስ ሙሉ ስም ያስገቡ"
+                    placeholder={t('newFullName')}
                     value={nameForm.newName}
                     onChange={(e) => setNameForm({ newName: e.target.value })}
                     required
@@ -338,10 +291,10 @@ const Header = ({ title, toggleSidebar }) => {
                 </div>
                 <div className="popup-actions">
                   <button type="submit" className="btn btn-success" disabled={loading}>
-                    {loading ? 'በመቀየር ላይ...' : 'ያስቀምጡ'}
+                    {loading ? t('saving') : t('save')}
                   </button>
                   <button type="button" className="btn btn-secondary" onClick={() => setShowNamePopup(false)}>
-                    ሰርዝ
+                    {t('cancel')}
                   </button>
                 </div>
               </form>
@@ -350,7 +303,6 @@ const Header = ({ title, toggleSidebar }) => {
         </div>
       )}
 
-      {/* Toaster */}
       <Toaster
         position="top-center"
         toastOptions={{
