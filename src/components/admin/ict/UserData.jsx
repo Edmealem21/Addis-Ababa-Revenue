@@ -383,15 +383,7 @@ const UserData = () => {
     item.taxCenter.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const effectivePerPage = perPage === 0 ? filteredData.length : perPage;
-  const totalPages = Math.ceil(filteredData.length / effectivePerPage) || 1;
-  const startIndex = (currentPage - 1) * effectivePerPage;
-  const endIndex = startIndex + effectivePerPage;
-  const currentData = filteredData.slice(startIndex, endIndex);
-
-  if (currentPage > totalPages) {
-    setCurrentPage(totalPages);
-  }
+  const currentData = filteredData;
 
   const handleMouseEnter = () => setShowTooltip(true);
   const handleMouseLeave = () => setShowTooltip(false);
@@ -428,148 +420,96 @@ const UserData = () => {
 
         {/* FRAME HEADER */}
         <div className="frame-header">
-          <div className="frame-actions">
-            <span className="total-count">{t('total')}: {employees.length} {t('users')}</span>
-          </div>
-          <div className="frame-title">
-            <span style={{ color: '#110505ea' }}>{t('ictAdmin')}  {'\u226B'}  </span>
-            {t('userDataTitle')}
-          </div>
-        </div>
-
-        {/* CONTROLS */}
-        <div className="data-controls">
-          <div className="per-page">
-            <span>{t('display')}</span>
-            <select 
-              value={perPage} 
-              onChange={(e) => {
-                setPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              <option value={0}>0</option>
-              <option value={2}>2</option>
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-            </select>
-            <span>{t('perPage')}</span>
-          </div>
           <div className="search-wrapper">
-            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
               <input
                 type="text"
                 placeholder={t('searchPlaceholder')}
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
         </div>
 
-        {/* TABLE */}
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>{t('fullName')}</th>
-                <th>{t('idNumber')}</th>
-                <th>{t('taxCenter')}</th>
-                <th>{t('jobCategory')}</th>
-                <th>{t('status')}</th>
-                <th>{t('actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentData.map((employee, index) => {
-                const identityCreated = employee.identityCreated || false;
-                return (
-                  <tr key={employee.id}>
-                    <td>{startIndex + index + 1}</td>
-                    <td><strong>{tData(employee.fullName)}</strong></td>
-                    <td>{employee.idNumber}</td>
-                    <td>{tData(employee.taxCenter)}</td>
-                    <td>{tData(employee.jobCategory || 'Officer')}</td>
-                    <td>
-                      <span className={`status-badge ${employee.status === 'Active' ? 'active' : employee.status === 'Inactive' ? 'inactive' : 'pending'}`}>
-                        {tData(employee.status === 'Active' ? 'ንቁ' : employee.status === 'Inactive' ? 'ተቋርጧል' : 'በመጠባበቅ ላይ')}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="table-actions" style={{ justifyContent: 'center' }}>
-                        {!identityCreated ? (
+        {/* MAIN CARDS GRID */}
+        <div className="cards-grid">
+          {currentData.map((employee, index) => {
+            const identityCreated = employee.identityCreated || false;
+            return (
+              <div className="data-card" key={employee.id}>
+                <div className="card-header">
+                  <div className="card-header-left">
+                    <div className="card-avatar">
+                      {(tData(employee.fullName) || 'U').charAt(0).toUpperCase()}
+                    </div>
+                    <div className="card-title-group">
+                      <div className="card-title">{tData(employee.fullName)}</div>
+                      <div className="card-subtitle">{tData(employee.jobCategory || 'Officer')}</div>
+                    </div>
+                  </div>
+                  <span className={`status-badge ${employee.status === 'Active' ? 'active' : employee.status === 'Inactive' ? 'inactive' : 'pending'}`}>
+                    {tData(employee.status === 'Active' ? 'ንቁ' : employee.status === 'Inactive' ? 'ተቋርጧል' : 'በመጠባበቅ ላይ')}
+                  </span>
+                </div>
+                <div className="card-body">
+                  <div className="card-field">
+                    <span className="card-label">🆔 {t('idNumber')}</span>
+                    <span className="card-value">{employee.idNumber}</span>
+                  </div>
+                  <div className="card-field">
+                    <span className="card-label">🏢 {t('taxCenter')}</span>
+                    <span className="card-value">{tData(employee.taxCenter)}</span>
+                  </div>
+                  <div className="card-field">
+                    <span className="card-label">💼 {t('jobCategory')}</span>
+                    <span className="card-value">{tData(employee.jobCategory || 'Officer')}</span>
+                  </div>
+                </div>
+                <div className="card-footer">
+                  <div className="card-actions" style={{ justifyContent: 'center' }}>
+                    {!identityCreated ? (
+                      <button 
+                        className="identity-btn create-btn" 
+                        onClick={() => openIdentityModal(employee)}
+                      >
+                        {t('createAccount')}
+                      </button>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between' }}>
+                        <div className="tooltip-wrapper">
                           <button 
-                            className="identity-btn create-btn" 
-                            onClick={() => openIdentityModal(employee)}
+                            className="identity-btn status-btn"
+                            style={{ cursor: 'default' }}
                           >
-                            {t('createAccount')}
+                            {t('accountCreated')}
                           </button>
-                        ) : (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div className="tooltip-wrapper">
-                              <button 
-                                className="identity-btn status-btn"
-                                style={{ cursor: 'default' }}
-                              >
-                                {t('accountCreated')}
-                              </button>
-                              <div className="custom-tooltip">
-                                {t('accountCreatedTooltip')}
-                              </div>
-                            </div>
-                            <button 
-                              className="action-btn delete" 
-                              title={t('deleteAccount')}
-                              onClick={() => handleDeleteIdentity(employee.id)}
-                            >
-                              <FaTrash />
-                            </button>
+                          <div className="custom-tooltip">
+                            {t('accountCreatedTooltip')}
                           </div>
-                        )}
+                        </div>
+                        <button 
+                          className="action-btn delete" 
+                          title={t('deleteAccount')}
+                          onClick={() => handleDeleteIdentity(employee.id)}
+                        >
+                          <FaTrash />
+                        </button>
                       </div>
-                    </td>
-                  </tr>
-                );
-              })}
-              {currentData.length === 0 && (
-                <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-                    {t('noData')}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          {currentData.length === 0 && (
+            <div className="no-data-card">
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
+              <div>{t('noData')}</div>
+            </div>
+          )}
         </div>
-
-        {/* PAGINATION */}
-        {filteredData.length > 0 && (
-          <div className="pagination">
-            <span className="pagination-info">
-              {t('showing')} {filteredData.length === 0 ? 0 : startIndex + 1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}
-            </span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-              {t('first')}
-            </button>
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-              {t('previous')}
-            </button>
-            <span className="page-indicator">{t('page')} {currentPage} {t('of')} {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-              {t('next')}
-            </button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
-              {t('last')}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ============================================
@@ -577,7 +517,7 @@ const UserData = () => {
           ============================================ */}
       {showIdentityModal && selectedEmployee && (
         <div className="modal-overlay" onClick={closeIdentityModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content identity-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2ecc71, #27ae60)' }}>
               <div className="modal-title">
                 <FaPlus className="modal-icon" />

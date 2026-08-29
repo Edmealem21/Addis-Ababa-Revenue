@@ -61,6 +61,7 @@ const RegisterTaxCenter = ({ onRegister, onCancel }) => {
           </button>
         </div>
       </form>
+      
     </div>
   );
 };

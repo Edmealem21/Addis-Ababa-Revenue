@@ -11,14 +11,16 @@ const IctDashboard = () => {
     <div className="page-content">
       <div className="dashboard-frame">
         <div className="logo-section">
-          <div className="line-top"></div>
+          
           <img src={addisLogo} alt="Logo" className="logo-image-dashboard" />
           <div className="line-bottom"></div>
           <h1 className="welcome-text">{t('welcome')}</h1>
           <p className="welcome-sub">{user?.name ? tData(user.name) : t('admin')}</p>
+          <div className="line-top"></div>
           <div className="line-divider"></div>
         </div>
       </div>
+    
     </div>
   );
 };

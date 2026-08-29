@@ -113,12 +113,7 @@ const IctBankAccounts = () => {
     item.accountOwner.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.branch.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const effectivePerPage = perPage;
-  const totalPages = Math.ceil(filteredData.length / effectivePerPage) || 1;
-  const startIndex = (currentPage - 1) * effectivePerPage;
-  const endIndex = startIndex + effectivePerPage;
-  const currentData = filteredData.slice(startIndex, endIndex);
-  if (currentPage > totalPages) setCurrentPage(totalPages);
+  const currentData = filteredData;
 
   return (
     <div className="page-content">
@@ -127,66 +122,66 @@ const IctBankAccounts = () => {
         <div className="frame-header">
           <div className="frame-actions">
             <button className="btn btn-primary" onClick={openRegister}><FaPlus /> {t('addRecord')}</button>
-            <span className="total-count">{t('total')}: {bankAccounts.length}</span>
-          </div>
-          <div className="frame-title">{t('bankAccountsTitle')}</div>
-        </div>
-        <div className="data-controls">
-          <div className="per-page">
-            <span>{t('display')}</span>
-            <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
-              <option value={1}>1</option><option value={2}>2</option><option value={5}>5</option><option value={10}>10</option>
-            </select>
-            <span>{t('perPage')}</span>
           </div>
           <div className="search-wrapper">
-            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
-              <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
+              <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
           </div>
         </div>
-        <div className="table-container">
-          <table>
-            <thead><tr><th>#</th><th>{t('bankName')}</th><th>{t('accountNumber')}</th><th>{t('accountOwner')}</th><th>{t('branch')}</th><th>{t('actions')}</th></tr></thead>
-            <tbody>
-              {currentData.map((acc, idx) => (
-                <tr key={acc.id}>
-                  <td>{startIndex + idx + 1}</td>
-                  <td><strong>{tData(acc.bankName)}</strong></td>
-                  <td>{acc.accountNumber}</td>
-                  <td>{tData(acc.accountOwner)}</td>
-                  <td>{tData(acc.branch)}</td>
-                  <td>
-                    <div className="table-actions">
-                      <button className="action-btn view" title={t('view')} onClick={() => openView(acc)}><FaEye /></button>
-                      <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(acc)}><FaEdit /></button>
-                      <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(acc)}><FaTrash /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {currentData.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>{t('noData')}</td></tr>}
-            </tbody>
-          </table>
+        {/* MAIN CARDS GRID */}
+        <div className="cards-grid">
+          {currentData.map((acc, idx) => (
+            <div className="data-card" key={acc.id}>
+              <div className="card-header">
+                <div className="card-header-left">
+                  <div className="card-avatar" style={{ background: 'linear-gradient(135deg, #27ae60, #219a52)' }}>
+                    🏦
+                  </div>
+                  <div className="card-title-group">
+                    <div className="card-title">{tData(acc.bankName)}</div>
+                    <div className="card-subtitle">{tData(acc.branch)}</div>
+                  </div>
+                </div>
+                <span className="card-index-badge">#{idx + 1}</span>
+              </div>
+              <div className="card-body">
+                <div className="card-field">
+                  <span className="card-label">💳 {t('accountNumber')}</span>
+                  <span className="card-value">{acc.accountNumber}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">👤 {t('accountOwner')}</span>
+                  <span className="card-value">{tData(acc.accountOwner)}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">🏢 {t('branch')}</span>
+                  <span className="card-value">{tData(acc.branch)}</span>
+                </div>
+              </div>
+              <div className="card-footer">
+                <div className="card-actions">
+                  <button className="action-btn view" title={t('view')} onClick={() => openView(acc)}><FaEye /></button>
+                  <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(acc)}><FaEdit /></button>
+                  <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(acc)}><FaTrash /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {currentData.length === 0 && (
+            <div className="no-data-card">
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
+              <div>{t('noData')}</div>
+            </div>
+          )}
         </div>
-        {filteredData.length > 0 && (
-          <div className="pagination">
-            <span className="pagination-info">{t('showing')} {startIndex+1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}</span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage===1}>{t('first')}</button>
-            <button onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage===1}>{t('previous')}</button>
-            <span className="page-indicator">{t('page')} {currentPage} {t('of')} {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage===totalPages}>{t('next')}</button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage===totalPages}>{t('last')}</button>
-          </div>
-        )}
       </div>
 
       {/* Register Modal */}
       {showRegister && (
         <div className="modal-overlay" onClick={closeRegister}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-content register-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header"><div className="modal-title"><FaPlus className="modal-icon" /> {t('registerNew')}</div></div>
             <div className="modal-body">
               <form onSubmit={handleRegister}>
@@ -297,6 +292,7 @@ const IctBankAccounts = () => {
           </div>
         </div>
       )}
+      
     </div>
   );
 };

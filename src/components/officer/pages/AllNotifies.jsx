@@ -30,12 +30,7 @@ const AllNotifies = () => {
     item.receiver.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Pagination
-  const totalPages = Math.ceil(filteredData.length / perPage) || 1;
-  const startIndex = (currentPage - 1) * perPage;
-  const endIndex = startIndex + perPage;
-  const currentData = filteredData.slice(startIndex, endIndex);
-  if (currentPage > totalPages) setCurrentPage(totalPages);
+  const currentData = filteredData;
 
   // Status badge
   const getStatusBadge = (status) => {
@@ -75,102 +70,64 @@ const AllNotifies = () => {
       <div className="data-container">
         {/* Frame Header */}
         <div className="frame-header">
-          <div className="frame-title">📨 ሁሉም ማሳወቂያዎች</div>
-          <div className="frame-actions">
-            <span className="total-count">ጠቅላላ: {filteredData.length}</span>
-          </div>
-        </div>
-
-        {/* Search Area with Line */}
-        <div className="notify-search-area">
           <div className="search-wrapper">
-            <span className="search-label">Search:</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
               <input
                 type="text"
                 placeholder="ፈልግ በስም, TIN, ወይም ተቀባይ..."
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
-          <div className={`taxpayer-line ${lineColor}`}></div>
-          {!hasSearch && (
-            <div className="taxpayer-hint">
-              <span>
-                🔍 Search by tax payer name, tax identity number, or receiver name
-              </span>
+        </div>
+
+        {/* MAIN CARDS GRID */}
+        <div className="cards-grid">
+          {currentData.map((item, idx) => (
+            <div className="data-card" key={item.id}>
+              <div className="card-header">
+                <div className="card-header-left">
+                  <div className="card-avatar" style={{ background: 'linear-gradient(135deg, #8e44ad, #9b59b6)' }}>
+                    {(item.name || 'N').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="card-title-group">
+                    <div className="card-title">{item.name}</div>
+                    <div className="card-subtitle">{item.tin}</div>
+                  </div>
+                </div>
+                <span className={getStatusBadge(item.status)}>
+                  {getStatusText(item.status)}
+                </span>
+              </div>
+              <div className="card-body">
+                <div className="card-field">
+                  <span className="card-label">🆔 TIN</span>
+                  <span className="card-value">{item.tin}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">👤 Receiver</span>
+                  <span className="card-value">{item.receiver}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">📅 Start Date</span>
+                  <span className="card-value">{item.startDate}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">📅 End Date</span>
+                  <span className="card-value">{item.endDate}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          {currentData.length === 0 && (
+            <div className="no-data-card">
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
+              <div>DATA NOT AVAILABLE</div>
             </div>
           )}
         </div>
-
-        {/* Table */}
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Tax Payer Name</th>
-                <th>TIN</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Receiver</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentData.map((item, idx) => (
-                <tr key={item.id}>
-                  <td>{startIndex + idx + 1}</td>
-                  <td><strong>{item.name}</strong></td>
-                  <td>{item.tin}</td>
-                  <td>{item.startDate}</td>
-                  <td>{item.endDate}</td>
-                  <td>{item.receiver}</td>
-                  <td>
-                    <span className={getStatusBadge(item.status)}>
-                      {getStatusText(item.status)}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-              {currentData.length === 0 && (
-                <tr>
-                  <td colSpan="7" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-                    DATA NOT AVAILABLE
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Pagination */}
-        {filteredData.length > 0 && (
-          <div className="pagination">
-            <span className="pagination-info">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length}
-            </span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-              First
-            </button>
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-              Previous
-            </button>
-            <span className="page-indicator">Page {currentPage} of {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-              Next
-            </button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
-              Last
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

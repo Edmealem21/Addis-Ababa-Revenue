@@ -7,7 +7,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useTaxCenters } from '../../../../context/TaxCenterContext';
 import { AuthContext } from '../../../../context/AuthContext';
 import { useLanguage } from '../../../../context/LanguageContext';
-import Tooltip from '../../../common/Tooltip';
+// import Tooltip from '../../../common/Tooltip';
 
 const IctEmployeeData = () => {
   const { t, tData } = useLanguage();
@@ -126,12 +126,7 @@ const IctEmployeeData = () => {
     item.idNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.taxCenter.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const effectivePerPage = perPage;
-  const totalPages = Math.ceil(filteredData.length / effectivePerPage) || 1;
-  const startIndex = (currentPage - 1) * effectivePerPage;
-  const endIndex = startIndex + effectivePerPage;
-  const currentData = filteredData.slice(startIndex, endIndex);
-  if (currentPage > totalPages) setCurrentPage(totalPages);
+  const currentData = filteredData;
 
   return (
     <div className="page-content">
@@ -140,66 +135,62 @@ const IctEmployeeData = () => {
         <div className="frame-header">
           <div className="frame-actions">
             <button className="btn btn-primary" onClick={openRegister}><FaPlus /> {t('addRecord')}</button>
-            <span className="total-count">{t('total')}: {employees.length}</span>
-          </div>
-          <div className="frame-title">{t('employeeDataTitle')}</div>
-        </div>
-        <div className="data-controls">
-          <div className="per-page">
-            <span>{t('display')}</span>
-            <select value={perPage} onChange={(e) => { setPerPage(Number(e.target.value)); setCurrentPage(1); }}>
-              <option value={1}>1</option><option value={2}>2</option><option value={5}>5</option><option value={10}>10</option>
-            </select>
-            <span>{t('perPage')}</span>
           </div>
           <div className="search-wrapper">
-            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
-              <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }} />
+              <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
             </div>
           </div>
         </div>
-        <div className="table-container">
-          <table>
-            <thead><tr><th>#</th><th>{t('fullName')}</th><th>{t('idNumber')}</th><th>{t('jobCategory')}</th><th>{t('taxCenter')}</th><th>{t('actions')}</th></tr></thead>
-            <tbody>
-              {currentData.map((emp, idx) => (
-                <tr key={emp.id}>
-                  <td>{startIndex + idx + 1}</td>
-                  <td><strong>{tData(emp.fullName)}</strong></td>
-                  <td>{emp.idNumber}</td>
-                  <td>{tData(emp.jobCategory)}</td>
-                  <td>{tData(emp.taxCenter)}</td>
-                  <td>
-                    <div className="table-actions">
-                      <button className="action-btn view" title={t('view')} onClick={() => openView(emp)}><FaEye /></button>
-                      <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(emp)}><FaEdit /></button>
-                      <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(emp)}><FaTrash /></button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {currentData.length === 0 && <tr><td colSpan="6" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>{t('noData')}</td></tr>}
-            </tbody>
-          </table>
+        {/* MAIN CARDS GRID */}
+        <div className="cards-grid">
+          {currentData.map((emp, idx) => (
+            <div className="data-card" key={emp.id}>
+              <div className="card-header">
+                <div className="card-header-left">
+                  <div className="card-avatar">
+                    {(tData(emp.fullName) || 'E').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="card-title-group">
+                    <div className="card-title">{tData(emp.fullName)}</div>
+                    <div className="card-subtitle">{tData(emp.jobCategory)}</div>
+                  </div>
+                </div>
+                <span className="card-index-badge">#{idx + 1}</span>
+              </div>
+              <div className="card-body">
+                <div className="card-field">
+                  <span className="card-label">🆔 {t('idNumber')}</span>
+                  <span className="card-value">{emp.idNumber}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">🏢 {t('taxCenter')}</span>
+                  <span className="card-value">{tData(emp.taxCenter)}</span>
+                </div>
+              </div>
+              <div className="card-footer">
+                <div className="card-actions">
+                  <button className="action-btn view" title={t('view')} onClick={() => openView(emp)}><FaEye /></button>
+                  <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(emp)}><FaEdit /></button>
+                  <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(emp)}><FaTrash /></button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {currentData.length === 0 && (
+            <div className="no-data-card">
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
+              <div>{t('noData')}</div>
+            </div>
+          )}
         </div>
-        {filteredData.length > 0 && (
-          <div className="pagination">
-            <span className="pagination-info">{t('showing')} {startIndex+1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}</span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage===1}>{t('first')}</button>
-            <button onClick={() => setCurrentPage(currentPage-1)} disabled={currentPage===1}>{t('previous')}</button>
-            <span className="page-indicator">{t('page')} {currentPage} {t('of')} {totalPages}</span>
-            <button onClick={() => setCurrentPage(currentPage+1)} disabled={currentPage===totalPages}>{t('next')}</button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage===totalPages}>{t('last')}</button>
-          </div>
-        )}
       </div>
 
       {/* Register Modal */}
       {showRegister && (
         <div className="modal-overlay" onClick={closeRegister}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-content register-modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header"><div className="modal-title"><FaPlus className="modal-icon" /> {t('registerNew')}</div></div>
             <div className="modal-body">
               <form onSubmit={handleRegister}>

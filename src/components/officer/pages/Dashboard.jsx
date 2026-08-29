@@ -6,7 +6,6 @@ import { useLanguage } from '../../../context/LanguageContext';
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
   const { t, tData } = useLanguage();
-  const currentYear = new Date().getFullYear();
 
   return (
     <div className="page-content">
@@ -19,9 +18,6 @@ const Dashboard = () => {
           <p className="welcome-sub">{user?.name ? tData(user.name) : t('officer')}</p>
            <div className="line-top"></div>
           <div className="line-divider"></div>
-        </div>
-        <div className="dashboard-footer">
-          <p>&copy; {currentYear} {t('footerText')}</p>
         </div>
       </div>
     </div>

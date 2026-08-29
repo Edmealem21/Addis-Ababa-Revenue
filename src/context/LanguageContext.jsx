@@ -365,6 +365,11 @@ const dataTranslations = {
   'Bahir Dar': 'ባህር ዳር',
   'ጎንደር': 'Gonder',
   'Gonder': 'ጎንደር',
+  'Tax center': 'የግብር ማእከል',
+  'የግብር ማእከል': 'Tax center',
+  'Tax Center Name': 'የግብር ማእከል ስም',
+  'የግብር ማእከል ስም': 'Tax Center Name',
+  
 
   // Addresses
   'ቅዱስ ጊዮርጊስ አደባባይ': 'Saint George Square',

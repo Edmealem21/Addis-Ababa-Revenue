@@ -224,12 +224,7 @@ const EmployeeData = () => {
     item.idNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.taxCenter.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const effectivePerPage = perPage === 0 ? filteredData.length : perPage;
-  const totalPages = Math.ceil(filteredData.length / effectivePerPage) || 1;
-  const startIndex = (currentPage - 1) * effectivePerPage;
-  const endIndex = startIndex + effectivePerPage;
-  const currentData = filteredData.slice(startIndex, endIndex);
-  if (currentPage > totalPages) setCurrentPage(totalPages);
+  const currentData = filteredData;
 
   // ============================================
   // VIEW MODAL – ORDER
@@ -294,7 +289,20 @@ const EmployeeData = () => {
         />
 
         {/* FRAME HEADER */}
-        <div className="frame-header">
+                <div className="frame-header">
+                  <div className="frame-actions">
+                    <button className="btn btn-primary" onClick={openModal}><FaPlus /> {t('addRecord')}</button>
+                  </div>
+                  <div className="search-wrapper">
+                    <div className="search-box">
+                      <FaSearch className="search-icon" />
+                      <input type="text" placeholder={t('searchPlaceholder')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    </div>
+                  </div>
+                </div>
+
+
+        {/* <div className="frame-header">
           <div className="frame-actions">
             <div className="tooltip-container">
               <button 
@@ -318,122 +326,84 @@ const EmployeeData = () => {
             <span style={{ color: '#110505ea' }}>{t('ictAdmin')} {'\u226B'}  </span>
             <span className="frame-icon"></span>
             {t('employeeDataTitle')}
-          </div>
-        </div>
+          // </div>
+        </div> */}
 
         {/* CONTROLS */}
-        <div className="data-controls">
-          <div className="per-page">
-            <span>{t('display')}</span>
-            <select 
-              value={perPage} 
-              onChange={(e) => {
-                setPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-            >
-              <option value={1}>1</option>
-              <option value={2}>2</option>
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-            </select>
-            <span>{t('perPage')}</span>
-          </div>
+        {/* <div className="data-controls">
           <div className="search-wrapper">
-            <span className="search-label">{t('searchLabel')}</span>
             <div className="search-box">
               <FaSearch className="search-icon" />
               <input
                 type="text"
                 placeholder={t('searchPlaceholder')}
                 value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
-        </div>
+        </div> */}
 
-        {/* MAIN TABLE */}
-        <div className="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>{t('fullName')}</th>
-                <th>{t('idNumber')}</th>
-                <th>{t('taxCenter')}</th>
-                <th>{t('actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentData.map((employee, index) => (
-                <tr key={employee.id}>
-                  <td>{startIndex + index + 1}</td>
-                  <td><strong>{tData(employee.fullName)}</strong></td>
-                  <td>{employee.idNumber}</td>
-                  <td>{tData(employee.taxCenter)}</td>
-                  <td>
-                    <div className="table-actions">
-                      <button 
-                        className="action-btn view" 
-                        title={t('view')}
-                        onClick={() => openViewModal(employee)}
-                      >
-                        <FaEye />
-                      </button>
-                      <button 
-                        className="action-btn edit" 
-                        title={t('edit')}
-                        onClick={() => openEditModal(employee)}
-                      >
-                        <FaEdit />
-                      </button>
-                      <button 
-                        className="action-btn delete" 
-                        title={t('delete')}
-                        onClick={() => openDeleteModal(employee)}
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {currentData.length === 0 && (
-                <tr>
-                  <td colSpan="5" style={{ textAlign: 'center', padding: '40px', color: '#94a3b8' }}>
-                    <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-                    {t('noData')}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+        {/* MAIN CARDS GRID */}
+        <div className="cards-grid">
+          {currentData.map((employee, index) => (
+            <div className="data-card" key={employee.id}>
+              <div className="card-header">
+                <div className="card-header-left">
+                  <div className="card-avatar">
+                    {(tData(employee.fullName) || 'E').charAt(0).toUpperCase()}
+                  </div>
+                  <div className="card-title-group">
+                    <div className="card-title">{tData(employee.fullName)}</div>
+                    <div className="card-subtitle">{tData(employee.role || 'Officer')}</div>
+                  </div>
+                </div>
+                <span className="card-index-badge">#{index + 1}</span>
+              </div>
+              <div className="card-body">
+                <div className="card-field">
+                  <span className="card-label">🆔 {t('idNumber')}</span>
+                  <span className="card-value">{employee.idNumber}</span>
+                </div>
+                <div className="card-field">
+                  <span className="card-label">🏢 {t('taxCenter')}</span>
+                  <span className="card-value">{tData(employee.taxCenter)}</span>
+                </div>
+              </div>
+              <div className="card-footer">
+                <div className="card-actions">
+                  <button 
+                    className="action-btn view" 
+                    title={t('view')}
+                    onClick={() => openViewModal(employee)}
+                  >
+                    <FaEye />
+                  </button>
+                  <button 
+                    className="action-btn edit" 
+                    title={t('edit')}
+                    onClick={() => openEditModal(employee)}
+                  >
+                    <FaEdit />
+                  </button>
+                  <button 
+                    className="action-btn delete" 
+                    title={t('delete')}
+                    onClick={() => openDeleteModal(employee)}
+                  >
+                    <FaTrash />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+          {currentData.length === 0 && (
+            <div className="no-data-card">
+              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
+              <div>{t('noData')}</div>
+            </div>
+          )}
         </div>
-
-        {/* PAGINATION with Count */}
-        {filteredData.length > 0 && (
-          <div className="pagination">
-            <span className="pagination-info">
-              {t('showing')} {filteredData.length === 0 ? 0 : startIndex + 1} {t('to')} {Math.min(endIndex, filteredData.length)} {t('of')} {filteredData.length}
-            </span>
-            <button onClick={() => setCurrentPage(1)} disabled={currentPage === 1}>
-              {t('first')}
-            </button>
-            <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-              {t('previous')}
-            </button>
-            <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>
-              {t('next')}
-            </button>
-            <button onClick={() => setCurrentPage(totalPages)} disabled={currentPage === totalPages}>
-              {t('last')}
-            </button>
-          </div>
-        )}
       </div>
 
       {/* ============================================
@@ -441,7 +411,7 @@ const EmployeeData = () => {
           ============================================ */}
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content register-modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div className="modal-title">
                 <FaPlus className="modal-icon" />

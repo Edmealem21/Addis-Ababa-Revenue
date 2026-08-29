@@ -4,6 +4,7 @@ import { FaHome, FaBell, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import Header from '../common/Header';
 import addisLogo from '../../assets/images/addis-logo.png';
 import { useLanguage } from '../../context/LanguageContext';
+import Footer from '../common/Footer';
 
 const OfficerLayout = () => {
   const [notifiesExpanded, setNotifiesExpanded] = useState(true);
@@ -11,7 +12,7 @@ const OfficerLayout = () => {
   const { t } = useLanguage();
 
   const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
 
   return (
     <div className="officer-container">
@@ -67,9 +68,10 @@ const OfficerLayout = () => {
         </div>
       </div>
 
-      <div className="officer-global-footer">
+      {/* <div className="officer-global-footer">
         <p>&copy; {currentYear} {t('footerText')}</p>
-      </div>
+      </div> */}
+      <Footer />
     </div>
   );
 };

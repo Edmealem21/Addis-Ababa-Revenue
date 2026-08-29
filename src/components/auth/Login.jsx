@@ -146,13 +146,13 @@ const Login = () => {
               &copy; {currentYear} 
               <strong> {t('footerText')}</strong>
             </p>
-            <p style={{ fontSize: '12px', color: '#888', marginTop: '6px', lineHeight: '1.6' }}>
+            {/* <p style={{ fontSize: '12px', color: '#888', marginTop: '6px', lineHeight: '1.6' }}>
               <strong>{t('demoAccounts')}</strong><br />
               👤 admin / admin123 (Admin)<br />
               👤 ictadmin / ictadmin123 (ICT Administrator)<br />
               👤 officer / officer123 (Officer)<br />
               👤 authority / authority123 (Authority)
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

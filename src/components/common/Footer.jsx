@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       &copy; {currentYear} 
-      <strong> የአዲስ አበባ ከተማ አስተዳደር ገቢዎብ</strong>
+      <strong> የአዲስ አበባ ከተማ አስተዳደር ገቢወቸ </strong>
     </footer>
   );
 };

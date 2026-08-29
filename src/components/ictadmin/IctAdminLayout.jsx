@@ -7,6 +7,7 @@ import {
 import Header from '../common/Header';
 import addisLogo from '../../assets/images/addis-logo.png';
 import { useLanguage } from '../../context/LanguageContext';
+import Footer from '../common/Footer';
 
 const initialEmployees = [
   { id: 1, fullName: 'አስቴር አለሙ', idNumber: 'REV-001', jobCategory: 'ICT Administrator', taxCenter: 'አዲስ አበባ ቅዱስ ጊዮርጊስ', status: 'Active', createdAt: '2024-01-15', updatedAt: '2024-01-15' },
@@ -71,6 +72,7 @@ const IctAdminLayout = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
