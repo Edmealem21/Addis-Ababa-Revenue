@@ -170,11 +170,23 @@ const TaxCenter = () => {
   // ============================================
   // FILTER & MAIN PAGINATION
   // ============================================
-  const filteredData = taxCenters.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.code.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = taxCenters.filter(item => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    const rawName = (item.name || '').toLowerCase();
+    const transName = (tData(item.name) || '').toLowerCase();
+    const rawAddress = (item.address || '').toLowerCase();
+    const transAddress = (tData(item.address) || '').toLowerCase();
+    const code = (item.code || '').toLowerCase();
+
+    return (
+      rawName.includes(term) ||
+      transName.includes(term) ||
+      rawAddress.includes(term) ||
+      transAddress.includes(term) ||
+      code.includes(term)
+    );
+  });
   const currentData = filteredData;
 
   // ============================================

@@ -1,9 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { FaSearch, FaPlus, FaTrash, FaTimes, FaCheck, FaEye, FaEdit } from 'react-icons/fa';
+import { FaSearch, FaPlus, FaTrash, FaTimes } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import { useLanguage } from '../../../context/LanguageContext';
-import Tooltip from '../../common/Tooltip';
 
 const UserData = () => {
   const { t, tData } = useLanguage();
@@ -107,7 +106,6 @@ const UserData = () => {
   // SAFE CONTEXT ACCESS (optional sync)
   // ============================================
   const context = useOutletContext();
-  const setOutletEmployees = context?.setEmployees || (() => {});
 
   // ============================================
   // LOCAL STATE – load from localStorage or fallback to defaults
@@ -134,8 +132,10 @@ const UserData = () => {
   // ============================================
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
-    setOutletEmployees(employees);
-  }, [employees, setOutletEmployees]);
+    if (context?.setEmployees) {
+      context.setEmployees(employees);
+    }
+  }, [employees, context]);
 
   // ============================================
   // REACT TO EXTERNAL UPDATES (other tabs / components)
@@ -165,11 +165,9 @@ const UserData = () => {
   };
 
   // ============================================
-  // SEARCH, PAGINATION, MODAL STATE
+  // SEARCH & MODAL STATE
   // ============================================
   const [searchTerm, setSearchTerm] = useState('');
-  const [perPage, setPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
 
   // Identity modal
   const [showIdentityModal, setShowIdentityModal] = useState(false);
@@ -180,21 +178,6 @@ const UserData = () => {
     confirmPassword: '',
   });
   const [loading, setLoading] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = useRef(null);
-
-  // Action modals
-  const [modalType, setModalType] = useState(null);
-  const [selectedEmp, setSelectedEmp] = useState(null);
-  const [viewPage, setViewPage] = useState(1);
-  const rowsPerPage = 4;
-  const [editFormData, setEditFormData] = useState({
-    fullName: '',
-    idNumber: '',
-    taxCenter: '',
-    jobCategory: 'Officer',
-    status: 'Active',
-  });
 
   // ============================================
   // IDENTITY HANDLERS
@@ -276,117 +259,43 @@ const UserData = () => {
   };
 
   // ============================================
-  // ACTION MODAL HANDLERS
+  // FILTER & SEARCH LOGIC
   // ============================================
-  const openViewModal = (employee) => {
-    setSelectedEmp(employee);
-    setViewPage(1);
-    setModalType('view');
-  };
+  const filteredData = employees.filter(item => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
 
-  const getViewFields = (emp) => {
-    if (!emp) return [];
-    return [
-      { label: t('fullName'), value: tData(emp.fullName) },
-      { label: t('idNumber'), value: emp.idNumber },
-      { label: t('taxCenter'), value: tData(emp.taxCenter) },
-      { label: t('role'), value: tData(emp.jobCategory || 'Officer') },
-      { label: t('status'), value: tData(emp.status || 'Active') },
-      { label: t('createdAt'), value: emp.createdAt || 'N/A' },
-      { label: t('updatedAt'), value: emp.updatedAt || 'N/A' },
-    ];
-  };
+    const rawFullName = (item.fullName || '').toLowerCase();
+    const transFullName = (tData(item.fullName) || '').toLowerCase();
 
-  const viewFields = getViewFields(selectedEmp);
-  const totalFields = viewFields.length;
-  const usePagination = false;
-  const totalRows = Math.ceil(totalFields / 2);
-  const totalViewPages = usePagination ? Math.ceil(totalRows / rowsPerPage) : 1;
-  const viewStartRow = usePagination ? (viewPage - 1) * rowsPerPage : 0;
-  const viewEndRow = usePagination ? Math.min(viewStartRow + rowsPerPage, totalRows) : totalRows;
+    const rawIdNumber = (item.idNumber || '').toLowerCase();
 
-  const viewCurrentRows = [];
-  for (let i = viewStartRow; i < viewEndRow; i++) {
-    const startIdx = i * 2;
-    const rowFields = viewFields.slice(startIdx, startIdx + 2);
-    viewCurrentRows.push(rowFields);
-  }
+    const rawTaxCenter = (item.taxCenter || '').toLowerCase();
+    const transTaxCenter = (tData(item.taxCenter) || '').toLowerCase();
 
-  const openEditModal = (employee) => {
-    setSelectedEmp(employee);
-    setEditFormData({
-      fullName: employee.fullName,
-      idNumber: employee.idNumber,
-      taxCenter: employee.taxCenter,
-      jobCategory: employee.jobCategory || 'Officer',
-      status: employee.status || 'Active',
-    });
-    setModalType('edit');
-  };
+    const rawJobCategory = (item.jobCategory || item.role || '').toLowerCase();
+    const transJobCategory = (tData(item.jobCategory || item.role) || '').toLowerCase();
 
-  const openDeleteModal = (employee) => {
-    setSelectedEmp(employee);
-    setModalType('delete');
-  };
+    const rawStatus = (item.status || '').toLowerCase();
+    const transStatus = (tData(item.status === 'Active' ? 'ንቁ' : item.status === 'Inactive' ? 'ተቋርጧል' : 'በመጠባበቅ ላይ') || '').toLowerCase();
 
-  const closeActionModal = () => {
-    setModalType(null);
-    setSelectedEmp(null);
-  };
+    const username = (item.username || '').toLowerCase();
 
-  const handleEdit = (e) => {
-    e.preventDefault();
-    if (!editFormData.fullName.trim() || !editFormData.idNumber.trim() || !editFormData.taxCenter.trim()) {
-      toast.error('እባክዎ ሁሉንም መስኮች ይሙሉ!');
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      const updated = employees.map(emp => {
-        if (emp.id === selectedEmp.id) {
-          return {
-            ...emp,
-            fullName: editFormData.fullName,
-            idNumber: editFormData.idNumber,
-            taxCenter: editFormData.taxCenter,
-            jobCategory: editFormData.jobCategory,
-            status: editFormData.status,
-            updatedAt: new Date().toISOString().split('T')[0],
-          };
-        }
-        return emp;
-      });
-      updateEmployees(updated);
-      setLoading(false);
-      closeActionModal();
-      toast.success('ሰራተኛ በተሳካ ሁኔታ ተስተካክሏል! ✅');
-    }, 1000);
-  };
-
-  const handleDelete = () => {
-    setLoading(true);
-    setTimeout(() => {
-      const updated = employees.filter(emp => emp.id !== selectedEmp.id);
-      updateEmployees(updated);
-      setLoading(false);
-      closeActionModal();
-      toast.success('ሰራተኛ በተሳካ ሁኔታ ተሰርዟል! 🗑️');
-    }, 1000);
-  };
-
-  // ============================================
-  // FILTER & PAGINATION
-  // ============================================
-  const filteredData = employees.filter(item =>
-    item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.idNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.taxCenter.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    return (
+      rawFullName.includes(term) ||
+      transFullName.includes(term) ||
+      rawIdNumber.includes(term) ||
+      rawTaxCenter.includes(term) ||
+      transTaxCenter.includes(term) ||
+      rawJobCategory.includes(term) ||
+      transJobCategory.includes(term) ||
+      rawStatus.includes(term) ||
+      transStatus.includes(term) ||
+      username.includes(term)
+    );
+  });
 
   const currentData = filteredData;
-
-  const handleMouseEnter = () => setShowTooltip(true);
-  const handleMouseLeave = () => setShowTooltip(false);
 
   // ============================================
   // RENDER
@@ -435,7 +344,7 @@ const UserData = () => {
 
         {/* MAIN CARDS GRID */}
         <div className="cards-grid">
-          {currentData.map((employee, index) => {
+          {currentData.map((employee) => {
             const identityCreated = employee.identityCreated || false;
             return (
               <div className="data-card" key={employee.id}>
@@ -583,173 +492,6 @@ const UserData = () => {
                   </button>
                 </div>
               </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================
-          VIEW MODAL
-          ============================================ */}
-      {modalType === 'view' && selectedEmp && (
-        <div className="modal-overlay" onClick={closeActionModal}>
-          <div className="modal-content view-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2c3e50, #3498db)' }}>
-              <div className="modal-title">
-                <FaEye className="modal-icon" />
-                <span>{t('details')}</span>
-              </div>
-              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}>
-                <FaTimes />
-              </button>
-            </div>
-            <div className="modal-body view-modal-body">
-              <div className="view-field-grid">
-                {viewCurrentRows.map((row, rowIdx) => (
-                  <div className="view-row" key={rowIdx}>
-                    {row.map((field, idx) => {
-                      const isFullWidth = field.fullWidth || false;
-                      return (
-                        <div className={`view-field ${isFullWidth ? 'full-width' : ''}`} key={idx}>
-                          <div className="view-label">{field.label}</div>
-                          <div className="view-value">{field.value}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
-              </div>
-              {usePagination && totalViewPages > 1 && (
-                <div className="view-pagination">
-                  <button onClick={() => setViewPage(prev => Math.max(prev - 1, 1))} disabled={viewPage === 1}>
-                    {t('previous')}
-                  </button>
-                  <span>{t('page')} {viewPage} {t('of')} {totalViewPages}</span>
-                  <button onClick={() => setViewPage(prev => Math.min(prev + 1, totalViewPages))} disabled={viewPage === totalViewPages}>
-                    {t('next')}
-                  </button>
-                </div>
-              )}
-            </div>
-            <div className="view-modal-footer">
-              <button type="button" className="btn-cancel-red" onClick={closeActionModal}>
-                {t('close')}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================
-          EDIT MODAL
-          ============================================ */}
-      {modalType === 'edit' && selectedEmp && (
-        <div className="modal-overlay" onClick={closeActionModal}>
-          <div className="modal-content edit-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-title">
-                <FaEdit className="modal-icon" />
-                <span>{t('edit')}</span>
-              </div>
-              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}>
-                <FaTimes />
-              </button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleEdit}>
-                <div className="form-grid">
-                  <div className="form-group full-width">
-                    <label>{t('fullName')} <span className="required">*</span></label>
-                    <input
-                      type="text"
-                      name="fullName"
-                      value={editFormData.fullName}
-                      onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>{t('idNumber')} <span className="required">*</span></label>
-                    <input
-                      type="text"
-                      name="idNumber"
-                      value={editFormData.idNumber}
-                      onChange={(e) => setEditFormData({ ...editFormData, idNumber: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>{t('taxCenter')} <span className="required">*</span></label>
-                    <input
-                      type="text"
-                      name="taxCenter"
-                      value={editFormData.taxCenter}
-                      onChange={(e) => setEditFormData({ ...editFormData, taxCenter: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label>{t('jobCategory')}</label>
-                    <select
-                      name="jobCategory"
-                      value={editFormData.jobCategory}
-                      onChange={(e) => setEditFormData({ ...editFormData, jobCategory: e.target.value })}
-                    >
-                      <option value="Authority">{tData('Authority')}</option>
-                      <option value="ICT Administrator">{tData('ICT Administrator')}</option>
-                      <option value="Officer">{tData('Officer')}</option>
-                    </select>
-                  </div>
-                  <div className="form-group">
-                    <label>{t('status')}</label>
-                    <select
-                      name="status"
-                      value={editFormData.status}
-                      onChange={(e) => setEditFormData({ ...editFormData, status: e.target.value })}
-                    >
-                      <option value="Active">{tData('ንቁ')}</option>
-                      <option value="Inactive">{tData('ተቋርጧል')}</option>
-                      <option value="Pending">{tData('በመጠባበቅ ላይ')}</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>
-                    {loading ? t('saving') : t('saveChanges')}
-                  </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>
-                    {t('close')}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ============================================
-          DELETE MODAL
-          ============================================ */}
-      {modalType === 'delete' && selectedEmp && (
-        <div className="modal-overlay" onClick={closeActionModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
-              <div className="modal-title">
-                <FaTrash className="modal-icon" />
-                <span>{t('warning')}</span>
-              </div>
-              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}>
-                <FaTimes />
-              </button>
-            </div>
-            <div className="modal-body" style={{ textAlign: 'center', padding: '30px' }}>
-              <div style={{ fontSize: '48px', color: '#e74c3c' }}>⚠️</div>
-              <h3 style={{ color: '#e74c3c' }}>{t('confirmDelete')}</h3>
-              <p><strong>{tData(selectedEmp.fullName)}</strong> ({selectedEmp.idNumber})</p>
-              <div className="modal-actions" style={{ justifyContent: 'center', background: 'transparent', borderTop: 'none' }}>
-                <button className="btn-btn-danger" onClick={handleDelete} disabled={loading} style={{ background: '#e74c3c', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('delete')}</button>
-                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('cancel')}</button>
-              </div>
             </div>
           </div>
         </div>

@@ -219,11 +219,29 @@ const EmployeeData = () => {
   // ============================================
   // FILTER & MAIN PAGINATION
   // ============================================
-  const filteredData = employees.filter(item =>
-    item.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.idNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.taxCenter.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = employees.filter(item => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    const rawName = (item.fullName || '').toLowerCase();
+    const transName = (tData(item.fullName) || '').toLowerCase();
+    const rawId = (item.idNumber || '').toLowerCase();
+    const rawCenter = (item.taxCenter || '').toLowerCase();
+    const transCenter = (tData(item.taxCenter) || '').toLowerCase();
+    const rawRole = (item.role || item.jobCategory || '').toLowerCase();
+    const transRole = (tData(item.role || item.jobCategory) || '').toLowerCase();
+    const rawStatus = (item.status || '').toLowerCase();
+
+    return (
+      rawName.includes(term) ||
+      transName.includes(term) ||
+      rawId.includes(term) ||
+      rawCenter.includes(term) ||
+      transCenter.includes(term) ||
+      rawRole.includes(term) ||
+      transRole.includes(term) ||
+      rawStatus.includes(term)
+    );
+  });
   const currentData = filteredData;
 
   // ============================================

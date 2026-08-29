@@ -233,11 +233,31 @@ const IctTaxPayers = () => {
   // ============================================
   // FILTER & PAGINATION
   // ============================================
-  const filteredData = taxPayers.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.tin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.phone.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = taxPayers.filter(item => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    const rawName = (item.name || '').toLowerCase();
+    const transName = (tData(item.name) || '').toLowerCase();
+    const tin = (item.tin || '').toLowerCase();
+    const phone = (item.phone || '').toLowerCase();
+    const rawOrgType = (item.orgType || '').toLowerCase();
+    const transOrgType = (tData(item.orgType) || '').toLowerCase();
+    const rawTaxCenter = (item.taxCenter || '').toLowerCase();
+    const transTaxCenter = (tData(item.taxCenter) || '').toLowerCase();
+    const username = (item.username || '').toLowerCase();
+
+    return (
+      rawName.includes(term) ||
+      transName.includes(term) ||
+      tin.includes(term) ||
+      phone.includes(term) ||
+      rawOrgType.includes(term) ||
+      transOrgType.includes(term) ||
+      rawTaxCenter.includes(term) ||
+      transTaxCenter.includes(term) ||
+      username.includes(term)
+    );
+  });
 
   const currentData = filteredData;
 
