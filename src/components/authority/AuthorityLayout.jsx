@@ -1,43 +1,47 @@
-// src/components/authority/AuthorityLayout.jsx
 import React, { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
-import { FaHome } from 'react-icons/fa';
+import { Outlet } from 'react-router-dom';
+import { FaTachometerAlt } from 'react-icons/fa';
 import Header from '../common/Header';
-import addisLogo from '../../assets/images/addis-logo.png';
-import { useLanguage } from '../../context/LanguageContext';
+import Sidebar from '../common/Sidebar';
 import Footer from '../common/Footer';
+import { useLanguage } from '../../context/LanguageContext';
 
 const AuthorityLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { t } = useLanguage();
 
-  const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  const authorityMenuItems = [
+    { path: '/authority/dashboard', label: t('dashboard'), icon: <FaTachometerAlt /> },
+  ];
 
   return (
-    <div className="authority-container">
-      {/* Sidebar - Bottom margin 0 */}
-      <div className={`authority-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
-        <div className="authority-brand">
-          <img src={addisLogo} alt="Addis Ababa Revenues Bureau" />
-          {!sidebarCollapsed && <h3>{t('authority')}</h3>}
-        </div>
-        <nav className="authority-nav">
-          <NavLink to="dashboard" className={({ isActive }) => `authority-nav-item ${isActive ? 'active' : ''}`}>
-            <FaHome /> {!sidebarCollapsed && t('dashboard')}
-          </NavLink>
-        </nav>
-      </div>
+    <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
+      <Header
+        title={t('authority')}
+        toggleSidebar={toggleSidebar}
+        menuItems={authorityMenuItems}
+        roleTitle={t('authority')}
+      />
 
-      {/* Content Area */}
-      <div className="authority-content-wrapper">
-        <div className="authority-content">
-          <Header title={t('authority')} toggleSidebar={toggleSidebar} />
-          <div className="authority-page-content">
-            <Outlet />
-          </div>
+      <div className="flex flex-1 min-h-[calc(100vh-57px)] w-full overflow-hidden relative">
+        <div className="hidden md:flex shrink-0">
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            menuItems={authorityMenuItems}
+            roleTitle={t('authority')}
+          />
         </div>
-        {/* ✅ Footer - Full width, outside content */}
-        <Footer />
+
+        <div className="flex-1 bg-slate-50 dark:bg-slate-900 flex flex-col min-h-[calc(100vh-57px)] overflow-x-hidden w-full">
+          <main className="flex-1 p-3 sm:p-5 md:p-6 overflow-y-auto">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
       </div>
     </div>
   );

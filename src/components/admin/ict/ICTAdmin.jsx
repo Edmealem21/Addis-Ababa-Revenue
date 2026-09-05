@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
 const ICTAdmin = () => {
-  // ============================================
-  // SHARED STATE - Employee Data
-  // This state is shared between EmployeeData and UserData
-  // ============================================
   const [employees, setEmployees] = useState([
     { id: 1, fullName: 'አስቴር አለሙ', idNumber: 'REV-001', taxCenter: 'አዲስ አበባ ቅዱስ ጊዮርጊስ', role: 'ICT Administrator', jobCategory: 'ICT Administrator', status: 'Active', identityCreated: false, createdAt: '2024-01-15', updatedAt: '2024-01-15' },
     { id: 2, fullName: 'ተስፋዬ መኮንን', idNumber: 'REV-002', taxCenter: 'አዲስ አበባ ቦሌ', role: 'Officer', jobCategory: 'Officer', status: 'Active', identityCreated: false, createdAt: '2024-02-10', updatedAt: '2024-02-10' },
@@ -18,8 +14,7 @@ const ICTAdmin = () => {
   ]);
 
   return (
-    <div className="page-content">
-      {/* Content - Pass shared state to child components */}
+    <div className="p-4 md:p-6 w-full text-slate-800 dark:text-slate-100">
       <Outlet context={{ employees, setEmployees }} />
     </div>
   );

@@ -9,28 +9,11 @@ const ThemeToggle = () => {
 
   return (
     <button 
-      className="theme-toggle"
+      className="w-9 h-9 bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm rounded-full cursor-pointer flex items-center justify-center text-sm text-white transition-all duration-200 outline-none"
       onClick={toggleTheme}
       title={theme === 'light' ? t('switchToDark') : t('switchToLight')}
-      style={{
-        background: 'rgba(255, 255, 255, 0.18)',
-        border: '1px solid rgba(255, 255, 255, 0.25)',
-        borderRadius: '50%',
-        width: '36px',
-        height: '36px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '16px',
-        color: '#ffffff',
-        transition: 'all 0.3s ease',
-        backdropFilter: 'blur(5px)',
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.18)'}
     >
-      {theme === 'light' ? <FaMoon /> : <FaSun style={{ color: '#fbbf24' }} />}
+      {theme === 'light' ? <FaMoon /> : <FaSun className="text-amber-400" />}
     </button>
   );
 };

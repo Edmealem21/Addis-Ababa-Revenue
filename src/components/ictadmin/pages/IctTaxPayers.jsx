@@ -1,28 +1,20 @@
 import React, { useState } from 'react';
-import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaTimes, FaCheck } from 'react-icons/fa';
+import { FaPlus, FaSearch, FaEye, FaEdit, FaTrash, FaTimes } from 'react-icons/fa';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTaxCenters } from '../../../context/TaxCenterContext';
 import { useLanguage } from '../../../context/LanguageContext';
-import Tooltip from '../../common/Tooltip';
 
 const IctTaxPayers = () => {
   const { taxCenters } = useTaxCenters();
   const { t, tData } = useLanguage();
   
-  // ============================================
-  // STATE
-  // ============================================
   const [taxPayers, setTaxPayers] = useState([
     { id: 1, name: 'አብልሃም አበበ', tin: 'TIN-001', phone: '0911-123456', orgType: 'ኩባንያ', taxCenter: 'አዲስ አበባ ቦሌ', isActive: true, identityCreated: false, createdAt: '2024-01-15', updatedAt: '2024-01-15' },
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [perPage, setPerPage] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Modal states
   const [showRegister, setShowRegister] = useState(false);
-  const [modalType, setModalType] = useState(null); // 'view', 'edit', 'delete'
+  const [modalType, setModalType] = useState(null);
   const [selectedTaxPayer, setSelectedTaxPayer] = useState(null);
   const [formData, setFormData] = useState({ 
     name: '', 
@@ -36,21 +28,11 @@ const IctTaxPayers = () => {
   });
   const [editFormData, setEditFormData] = useState({ name: '', tin: '', phone: '', orgType: '', taxCenter: '', isActive: true });
   const [loading, setLoading] = useState(false);
-  const [viewPage, setViewPage] = useState(1);
-  const rowsPerPage = 4;
 
-  // Identity modal
   const [showIdentityModal, setShowIdentityModal] = useState(false);
   const [selectedIdentity, setSelectedIdentity] = useState(null);
   const [identityForm, setIdentityForm] = useState({ username: '', password: '', confirmPassword: '' });
 
-  // Tooltip for "identity already created"
-  const [showTooltip, setShowTooltip] = useState(false);
-  const tooltipRef = React.useRef(null);
-
-  // ============================================
-  // HANDLERS
-  // ============================================
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
@@ -66,7 +48,6 @@ const IctTaxPayers = () => {
     setIdentityForm(prev => ({ ...prev, [name]: value }));
   };
 
-  // Open modals
   const openRegister = () => {
     setFormData({ 
       name: '', 
@@ -82,7 +63,7 @@ const IctTaxPayers = () => {
   };
   const closeRegister = () => setShowRegister(false);
 
-  const openView = (tp) => { setSelectedTaxPayer(tp); setViewPage(1); setModalType('view'); };
+  const openView = (tp) => { setSelectedTaxPayer(tp); setModalType('view'); };
   const openEdit = (tp) => { setSelectedTaxPayer(tp); setEditFormData(tp); setModalType('edit'); };
   const openDelete = (tp) => { setSelectedTaxPayer(tp); setModalType('delete'); };
   const closeActionModal = () => { setModalType(null); setSelectedTaxPayer(null); };
@@ -102,19 +83,6 @@ const IctTaxPayers = () => {
   };
 
   const viewFields = getViewFields(selectedTaxPayer);
-  const totalFields = viewFields.length;
-  const usePagination = false;
-  const totalRows = Math.ceil(totalFields / 2);
-  const totalViewPages = usePagination ? Math.ceil(totalRows / rowsPerPage) : 1;
-  const viewStartRow = usePagination ? (viewPage - 1) * rowsPerPage : 0;
-  const viewEndRow = usePagination ? Math.min(viewStartRow + rowsPerPage, totalRows) : totalRows;
-
-  const viewCurrentRows = [];
-  for (let i = viewStartRow; i < viewEndRow; i++) {
-    const startIdx = i * 2;
-    const rowFields = viewFields.slice(startIdx, startIdx + 2);
-    viewCurrentRows.push(rowFields);
-  }
 
   const openIdentityModal = (tp) => {
     setSelectedIdentity(tp);
@@ -127,23 +95,18 @@ const IctTaxPayers = () => {
     setIdentityForm({ username: '', password: '', confirmPassword: '' });
   };
 
-  // ============================================
-  // CRUD OPERATIONS
-  // ============================================
   const handleRegister = (e) => {
     e.preventDefault();
-    // Require only the essential fields
     if (!formData.name.trim() || !formData.tin.trim() || !formData.phone.trim() || !formData.orgType.trim()) {
       toast.error('እባክዎ ስም፣ TIN፣ ስልክ እና የድርጅት ዓይነት ይሙሉ!');
       return;
     }
     setLoading(true);
     setTimeout(() => {
-      // Add default values for taxCenter and isActive (they are not in the form)
       const newTp = {
         id: taxPayers.length + 1,
         ...formData,
-        taxCenter: 'አዲስ አበባ', // default or leave empty; you can adjust as needed
+        taxCenter: 'አዲስ አበባ',
         isActive: true,
         identityCreated: false,
         createdAt: new Date().toISOString().split('T')[0],
@@ -187,9 +150,6 @@ const IctTaxPayers = () => {
     }, 1000);
   };
 
-  // ============================================
-  // IDENTITY CREATION
-  // ============================================
   const handleCreateIdentity = (e) => {
     e.preventDefault();
     if (!identityForm.username.trim()) {
@@ -230,9 +190,6 @@ const IctTaxPayers = () => {
     }
   };
 
-  // ============================================
-  // FILTER & PAGINATION
-  // ============================================
   const filteredData = taxPayers.filter(item => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) return true;
@@ -259,17 +216,8 @@ const IctTaxPayers = () => {
     );
   });
 
-  const currentData = filteredData;
-
-  // Tooltip handlers
-  const handleMouseEnter = () => setShowTooltip(true);
-  const handleMouseLeave = () => setShowTooltip(false);
-
-  // ============================================
-  // RENDER
-  // ============================================
   return (
-    <div className="page-content">
+    <div className="p-4 md:p-6 w-full text-slate-800 dark:text-slate-100">
       <Toaster
         position="top-center"
         toastOptions={{
@@ -287,140 +235,147 @@ const IctTaxPayers = () => {
         }}
       />
 
-      <div className="data-container">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
         {/* FRAME HEADER */}
-        <div className="frame-header">
-          <div className="frame-actions">
-            <button className="btn btn-primary" onClick={openRegister}>
-              <FaPlus /> {t('addRecord')}
-            </button>
-          </div>
-          <div className="search-wrapper">
-            <div className="search-box">
-              <FaSearch className="search-icon" />
-              <input
-                type="text"
-                placeholder={t('searchTaxpayerPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+        <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <button 
+            className="bg-blue-600 hover:bg-blue-400 dark: to-blue-600 text-white font-bold px-4 py-2.5 rounded-xl shadow-md transition-all flex items-center gap-2 text-sm border-none cursor-pointer" 
+            onClick={openRegister}
+          >
+            <FaPlus /> {t('addRecord')}
+          </button>
+
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3.5 py-2 w-full sm:w-72 focus-within:ring-2 focus-within:ring-navy-800/20 dark:focus-within:ring-gold-400/20 transition-all">
+            <FaSearch className="text-slate-400 dark:text-slate-300 shrink-0 text-sm" />
+            <input
+              type="text"
+              className="bg-transparent border-none outline-none text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-400 w-full"
+              placeholder={t('searchTaxpayerPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
 
-        {/* MAIN CARDS GRID */}
-        <div className="cards-grid">
-          {currentData.map((tp, idx) => {
+        {/* CARDS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+          {filteredData.map((tp, idx) => {
             const identityCreated = tp.identityCreated || false;
             return (
-              <div className="data-card" key={tp.id}>
-                <div className="card-header">
-                  <div className="card-header-left">
-                    <div className="card-avatar" style={{ background: 'linear-gradient(135deg, #3498db, #2980b9)' }}>
+              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-1" key={tp.id}>
+                <div className="p-4 border-b border-slate-100 dark:border-slate-700/60 flex items-start justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-blue-600 text-white font-bold flex items-center justify-center text-lg shadow-md shrink-0">
                       {(tData(tp.name) || 'T').charAt(0).toUpperCase()}
                     </div>
-                    <div className="card-title-group">
-                      <div className="card-title">{tData(tp.name)}</div>
-                      <div className="card-subtitle">{tData(tp.orgType)}</div>
+                    <div>
+                      <div className="font-bold text-base text-navy-800 dark:text-gold-400 line-clamp-1">{tData(tp.name)}</div>
+                      <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 line-clamp-1">{tData(tp.orgType)}</div>
                     </div>
                   </div>
-                  <span className={`status-badge ${tp.isActive ? 'active' : 'inactive'}`}>
+                  <span className={`text-xs font-extrabold px-2.5 py-1 rounded-lg shrink-0 ${
+                    tp.isActive 
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800' 
+                      : 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800'
+                  }`}>
                     {tData(tp.isActive ? 'ንቁ' : 'ተቋርጧል')}
                   </span>
                 </div>
-                <div className="card-body">
-                  <div className="card-field">
-                    <span className="card-label">🆔 {t('tinNumber')}</span>
-                    <span className="card-value">{tp.tin}</span>
+
+                <div className="p-4 space-y-2 text-sm flex-1">
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-0.5">🆔 {t('tinNumber')}</span>
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{tp.tin}</span>
                   </div>
-                  <div className="card-field">
-                    <span className="card-label">📞 {t('phoneNumber')}</span>
-                    <span className="card-value">{tp.phone}</span>
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-0.5">📞 {t('phoneNumber')}</span>
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{tp.phone}</span>
                   </div>
-                  <div className="card-field">
-                    <span className="card-label">🏢 {t('taxCenter')}</span>
-                    <span className="card-value">{tData(tp.taxCenter)}</span>
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-0.5">🏢 {t('taxCenter')}</span>
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{tData(tp.taxCenter)}</span>
                   </div>
                 </div>
-                <div className="card-footer">
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
-                    <div className="table-actions" style={{ justifyContent: 'center' }}>
-                      {!identityCreated ? (
-                        <button 
-                          className="identity-btn create-btn" 
-                          onClick={() => openIdentityModal(tp)}
-                        >
-                          {t('createAccount')}
-                        </button>
-                      ) : (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'space-between', width: '100%' }}>
-                          <div className="tooltip-wrapper">
-                            <button 
-                              className="identity-btn status-btn"
-                              style={{ cursor: 'default' }}
-                            >
-                              {t('accountCreated')}
-                            </button>
-                            <div className="custom-tooltip">
-                              {t('accountCreatedTooltip')}
-                            </div>
-                          </div>
+
+                <div className="p-3 border-t border-slate-100 dark:border-slate-700/60 bg-slate-50/30 dark:bg-slate-800/30 flex flex-col gap-2.5">
+                  <div>
+                    {!identityCreated ? (
+                      <button 
+                        className="w-full py-2 px-3 bg-red-600 hover:bg-red-400 text-white rounded-xl text-xs font-bold shadow-sm transition-colors border-none cursor-pointer text-center" 
+                        onClick={() => openIdentityModal(tp)}
+                      >
+                        {t('createAccount')}
+                      </button>
+                    ) : (
+                      <div className="flex items-center gap-2 w-full justify-between">
+                        <div className="relative group flex-1">
                           <button 
-                            className="action-btn delete" 
-                            title={t('deleteAccount')}
-                            onClick={() => handleDeleteIdentity(tp.id)}
+                            className="w-full py-2 px-3 bg-green-600 dark:bg-green-400 hover:cursor-not-allowed text-sky-700 dark:text-sky-300 rounded-xl text-xs font-bold border-none cursor-default text-center"
                           >
-                            <FaTrash />
+                            {t('accountCreated')}
                           </button>
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-slate-900 text-white text-xs py-1.5 px-3 rounded-lg shadow-xl whitespace-nowrap z-20">
+                            {t('accountCreatedTooltip')}
+                          </div>
                         </div>
-                      )}
-                    </div>
-                    <div className="card-actions" style={{ justifyContent: 'center' }}>
-                      <button className="action-btn view" title={t('view')} onClick={() => openView(tp)}><FaEye /></button>
-                      <button className="action-btn edit" title={t('edit')} onClick={() => openEdit(tp)}><FaEdit /></button>
-                      <button className="action-btn delete" title={t('delete')} onClick={() => openDelete(tp)}><FaTrash /></button>
-                    </div>
+                        <button 
+                          className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-sm border-none cursor-pointer shrink-0" 
+                          title={t('deleteAccount')}
+                          onClick={() => handleDeleteIdentity(tp.id)}
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex justify-end gap-2">
+                    <button className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 hover:bg-sky-500 hover:text-white flex items-center justify-center transition-colors text-sm border-none cursor-pointer" title={t('view')} onClick={() => openView(tp)}><FaEye /></button>
+                    <button className="w-8 h-8 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-colors text-sm border-none cursor-pointer" title={t('edit')} onClick={() => openEdit(tp)}><FaEdit /></button>
+                    <button className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-sm border-none cursor-pointer" title={t('delete')} onClick={() => openDelete(tp)}><FaTrash /></button>
                   </div>
                 </div>
               </div>
             );
           })}
-          {currentData.length === 0 && (
-            <div className="no-data-card">
-              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-              <div>{t('noData')}</div>
+
+          {filteredData.length === 0 && (
+            <div className="col-span-full py-12 text-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700">
+              <div className="text-5xl mb-3">📭</div>
+              <div className="text-base font-semibold">{t('noData')}</div>
             </div>
           )}
         </div>
       </div>
 
-      {/* ============================================
-          REGISTER MODAL
-          ============================================ */}
+      {/* REGISTER MODAL */}
       {showRegister && (
-        <div className="modal-overlay" onClick={closeRegister}>
-          <div className="modal-content register-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-title"><FaPlus className="modal-icon" /> {t('newTaxPayer')}</div>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={closeRegister}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200 dark:border-slate-700 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-blue-600 dark:bg-blue-400 text-white px-6 py-4 flex items-center justify-between border-b border-navy-700">
+              <div className="flex items-center gap-3 font-bold text-base text-white dark:text-gold-400">
+                <FaPlus className="text-gold-400" />
+                <span>{t('newTaxPayer')}</span>
+              </div>
             </div>
-            <div className="modal-body">
+            <div className="p-6 text-slate-800 dark:text-slate-100">
               <form onSubmit={handleRegister}>
-                <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr' }}>
-                  <div className="form-group full-width">
-                    <label>{t('fullName')} *</label>
-                    <input name="name" value={formData.name} onChange={handleChange} required />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div className="md:col-span-2">
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('fullName')} <span className="text-rose-500">*</span></label>
+                    <input name="name" className="w-full px-2.5 py-2 border-1.5 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.name} onChange={handleChange} required />
                   </div>
-                  <div className="form-group">
-                    <label>{t('tinNumber')} *</label>
-                    <input name="tin" value={formData.tin} onChange={handleChange} required />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('tinNumber')} <span className="text-rose-500">*</span></label>
+                    <input name="tin" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.tin} onChange={handleChange} required />
                   </div>
-                  <div className="form-group">
-                    <label>{t('mrc')}</label>
-                    <input name="sellsIdentityCode" value={formData.sellsIdentityCode} onChange={handleChange} />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('mrc')}</label>
+                    <input name="sellsIdentityCode" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.sellsIdentityCode} onChange={handleChange} />
                   </div>
-                  <div className="form-group">
-                    <label>{t('orgType')} *</label>
-                    <select style={{ width: '100%', border: 'none' }} name="orgType" value={formData.orgType} onChange={handleChange} required>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('orgType')} <span className="text-rose-500">*</span></label>
+                    <select name="orgType" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.orgType} onChange={handleChange} required>
                       <option value="">{t('select')}</option>
                       <option value="ኅላፊነቱ የተወሰነ ይግል ማህበር">{tData('ኅላፊነቱ የተወሰነ ይግል ማህበር')}</option>
                       <option value="ህብረት ስራ">{tData('ህብረት ስራ')}</option>
@@ -431,28 +386,28 @@ const IctTaxPayers = () => {
                       <option value="የግል">{tData('የግል')}</option>
                     </select>
                   </div>
-                  <div className="form-group">
-                    <label>{t('turnoverTax')}</label>
-                    <input name="turnoverTax" value={formData.turnoverTax} onChange={handleChange} type="number" step="0.01" />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('turnoverTax')}</label>
+                    <input name="turnoverTax" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.turnoverTax} onChange={handleChange} type="number" step="0.01" />
                   </div>
-                  <div className="form-group">
-                    <label>{t('subIdentity')}</label>
-                    <input name="subIdentityNumber" value={formData.subIdentityNumber} onChange={handleChange} />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('subIdentity')}</label>
+                    <input name="subIdentityNumber" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.subIdentityNumber} onChange={handleChange} />
                   </div>
-                  <div className="form-group">
-                    <label>{t('jobType')}</label>
-                    <input name="jobType" value={formData.jobType} onChange={handleChange} />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('jobType')}</label>
+                    <input name="jobType" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.jobType} onChange={handleChange} />
                   </div>
-                  <div className="form-group">
-                    <label>{t('phoneNumber')} *</label>
-                    <input name="phone" value={formData.phone} onChange={handleChange} required />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('phoneNumber')} <span className="text-rose-500">*</span></label>
+                    <input name="phone" className="w-full px-2.5 py-1.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={formData.phone} onChange={handleChange} required />
                   </div>
                 </div>
-                <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+                  <button type="submit" className="px-5 py-2 bg-blue-600 hover:bg-blue-400 text-white rounded-xl text-sm font-bold shadow-md transition-colors border-none cursor-pointer" disabled={loading}>
                     {loading ? t('registering') : t('register')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeRegister}>{t('cancel')}</button>
+                  <button type="button" className="px-5 py-2 bg-red-600 hover:bg-red-400 text-white rounded-xl text-sm font-bold transition-colors border-none cursor-pointer" onClick={closeRegister}>{t('cancel')}</button>
                 </div>
               </form>
             </div>
@@ -460,46 +415,27 @@ const IctTaxPayers = () => {
         </div>
       )}
 
-      {/* ============================================
-          VIEW MODAL
-          ============================================ */}
+      {/* VIEW MODAL */}
       {modalType === 'view' && selectedTaxPayer && (
-        <div className="modal-overlay" onClick={closeActionModal}>
-          <div className="modal-content view-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2c3e50, #3498db)' }}>
-              <div className="modal-title"><FaEye className="modal-icon" /> {t('details')}</div>
-              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
-            </div>
-            <div className="modal-body view-modal-body">
-              <div className="view-field-grid">
-                {viewCurrentRows.map((row, rowIdx) => (
-                  <div className="view-row" key={rowIdx}>
-                    {row.map((field, idx) => {
-                      const isFullWidth = field.fullWidth || false;
-                      return (
-                        <div className={`view-field ${isFullWidth ? 'full-width' : ''}`} key={idx}>
-                          <div className="view-label">{field.label}</div>
-                          <div className="view-value">{field.value}</div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ))}
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={closeActionModal}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-blue-600 dark:bg-blue-400 text-white px-6 py-4 flex items-center justify-between border-b border-navy-700">
+              <div className="flex items-center gap-3 font-bold text-base text-white dark:text-gold-400">
+                <FaEye className="text-gold-400" />
+                <span>{t('details')}</span>
               </div>
-              {usePagination && totalViewPages > 1 && (
-                <div className="view-pagination">
-                  <button onClick={() => setViewPage(prev => Math.max(prev - 1, 1))} disabled={viewPage === 1}>
-                    {t('previous')}
-                  </button>
-                  <span>{t('page')} {viewPage} {t('of')} {totalViewPages}</span>
-                  <button onClick={() => setViewPage(prev => Math.min(prev + 1, totalViewPages))} disabled={viewPage === totalViewPages}>
-                    {t('next')}
-                  </button>
-                </div>
-              )}
+              <button className="text-slate-300 hover:text-white transition-colors bg-transparent border-none cursor-pointer text-lg" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
-            <div className="view-modal-footer">
-              <button type="button" className="btn-cancel-red" onClick={closeActionModal}>
+            <div className="p-6 text-slate-800 dark:text-slate-100 space-y-1.5">
+              {viewFields.map((field, idx) => (
+                <div key={idx} className="flex justify-between items-center py-2 border-b border-slate-100 dark:border-slate-700/60 last:border-none">
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">{field.label}:</span>
+                  <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{field.value}</span>
+                </div>
+              ))}
+            </div>
+            <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+              <button type="button" className="px-5 py-2 bg-red-600 hover:bg-red-400 text-white rounded-xl text-xs font-bold transition-colors border-none cursor-pointer" onClick={closeActionModal}>
                 {t('close')}
               </button>
             </div>
@@ -507,42 +443,56 @@ const IctTaxPayers = () => {
         </div>
       )}
 
-      {/* ============================================
-          EDIT MODAL
-          ============================================ */}
+      {/* EDIT MODAL */}
       {modalType === 'edit' && selectedTaxPayer && (
-        <div className="modal-overlay" onClick={closeActionModal}>
-          <div className="modal-content edit-modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div className="modal-title"><FaEdit className="modal-icon" /> {t('edit')}</div>
-              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={closeActionModal}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-blue-600 dark:bg-blue-400 text-white px-6 py-4 flex items-center justify-between border-b border-navy-700">
+              <div className="flex items-center gap-3 font-bold text-base text-white dark:text-gold-400">
+                <FaEdit className="text-gold-400" />
+                <span>{t('edit')}</span>
+              </div>
+              <button className="text-slate-300 hover:text-white transition-colors bg-transparent border-none cursor-pointer text-lg" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
-            <div className="modal-body">
+            <div className="p-6 text-slate-800 dark:text-slate-100">
               <form onSubmit={handleEdit}>
-                <div className="form-grid">
-                  <div className="form-group full-width"><label>{t('fullName')} *</label><input name="name" value={editFormData.name} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>{t('tinNumber')} *</label><input name="tin" value={editFormData.tin} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>{t('phoneNumber')} *</label><input name="phone" value={editFormData.phone} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>{t('orgType')} *</label><input name="orgType" value={editFormData.orgType} onChange={handleEditChange} required /></div>
-                  <div className="form-group"><label>{t('taxCenter')} *</label>
-                    <select name="taxCenter" value={editFormData.taxCenter} onChange={handleEditChange} required>
+                <div className="space-y-1">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('fullName')} <span className="text-rose-500">*</span></label>
+                    <input name="name" className="w-full px-3.5 py-2 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={editFormData.name} onChange={handleEditChange} required />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('tinNumber')} <span className="text-rose-500">*</span></label>
+                    <input name="tin" className="w-full px-3.5 py-2 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={editFormData.tin} onChange={handleEditChange} required />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('phoneNumber')} <span className="text-rose-500">*</span></label>
+                    <input name="phone" className="w-full px-3.5 py-2 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={editFormData.phone} onChange={handleEditChange} required />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('orgType')} <span className="text-rose-500">*</span></label>
+                    <input name="orgType" className="w-full px-3.5 py-2 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={editFormData.orgType} onChange={handleEditChange} required />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('taxCenter')} <span className="text-rose-500">*</span></label>
+                    <select name="taxCenter" className="w-full px-3.5 py-2 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={editFormData.taxCenter} onChange={handleEditChange} required>
                       <option value="">{t('select')}</option>
                       {taxCenters.map(c => <option key={c.id} value={c.name}>{tData(c.name)}</option>)}
                     </select>
                   </div>
-                  <div className="form-group">
-                    <label>{t('status')}</label>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingTop: '8px' }}>
-                      <input type="checkbox" name="isActive" checked={editFormData.isActive} onChange={handleEditChange} />
-                      <span>{tData(editFormData.isActive ? 'ንቁ' : 'ተቋርጧል')}</span>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('status')}</label>
+                    <div className="flex items-center gap-2 pt-1">
+                      <input type="checkbox" name="isActive" className="w-4 h-4 rounded border-slate-300 text-navy-800 focus:ring-navy-800 cursor-pointer" checked={editFormData.isActive} onChange={handleEditChange} />
+                      <span className="text-sm font-semibold">{tData(editFormData.isActive ? 'ንቁ' : 'ተቋርጧል')}</span>
                     </div>
                   </div>
                 </div>
-                <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+                  <button type="submit" className="px-5 py-2.5 bg-green-600 hover:bg-green-400 text-white rounded-xl text-sm font-bold shadow-md transition-colors border-none cursor-pointer" disabled={loading}>
                     {loading ? t('saving') : t('saveChanges')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeActionModal}>{t('close')}</button>
+                  <button type="button" className="px-5 py-2.5 bg-red-600 hover:bg-red-400 text-white rounded-xl text-sm font-bold transition-colors border-none cursor-pointer" onClick={closeActionModal}>{t('close')}</button>
                 </div>
               </form>
             </div>
@@ -550,64 +500,68 @@ const IctTaxPayers = () => {
         </div>
       )}
 
-      {/* ============================================
-          DELETE MODAL
-          ============================================ */}
+      {/* DELETE MODAL */}
       {modalType === 'delete' && selectedTaxPayer && (
-        <div className="modal-overlay" onClick={closeActionModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
-              <div className="modal-title"><FaTrash className="modal-icon" /> {t('warning')}</div>
-              <button className="modal-close-btn" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={closeActionModal}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200 dark:border-slate-700 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-rose-700 text-white px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3 font-bold text-base text-white">
+                <FaTrash />
+                <span>{t('warning')}</span>
+              </div>
+              <button className="text-slate-200 hover:text-white transition-colors bg-transparent border-none cursor-pointer text-lg" onClick={closeActionModal} title={t('close')}><FaTimes /></button>
             </div>
-            <div className="modal-body" style={{ textAlign: 'center', padding: '30px' }}>
-              <div style={{ fontSize: '48px', color: '#e74c3c' }}>⚠️</div>
-              <h3 style={{ color: '#e74c3c' }}>{t('confirmDelete')}</h3>
-              <p><strong>{tData(selectedTaxPayer.name)}</strong> ({selectedTaxPayer.tin})</p>
-              <div className="modal-actions" style={{ justifyContent: 'center', background: 'transparent', borderTop: 'none', marginTop: '20px' }}>
-                <button className="btn-btn-danger" onClick={handleDelete} disabled={loading} style={{ background: '#e74c3c', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('delete')}</button>
-                <button className="btn-btn-secondary" onClick={closeActionModal} style={{ background: '#95a5a6', color: '#fff', padding: '10px 30px', borderRadius: '8px', border: 'none' }}>{t('cancel')}</button>
+            <div className="p-6 text-center text-slate-800 dark:text-slate-100">
+              <div className="text-5xl mb-3 text-rose-600">⚠️</div>
+              <h3 className="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2">{t('confirmDelete')}</h3>
+              <p className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-6">
+                <strong>{tData(selectedTaxPayer.name)}</strong> ({selectedTaxPayer.tin})
+              </p>
+              <div className="flex justify-end gap-3">
+                <button className="px-5 py-2.5 bg-rose-900 hover:bg-rose-700 text-white rounded-xl text-sm font-bold shadow-md transition-colors border-none cursor-pointer" onClick={handleDelete} disabled={loading}>{t('delete')}</button>
+                <button className="px-5 py-2.5 bg-red-600 hover:bg-red-400 text-white rounded-xl text-sm font-bold transition-colors border-none cursor-pointer" onClick={closeActionModal}>{t('cancel')}</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* ============================================
-          IDENTITY MODAL
-          ============================================ */}
+      {/* IDENTITY MODAL */}
       {showIdentityModal && selectedIdentity && (
-        <div className="modal-overlay" onClick={closeIdentityModal}>
-          <div className="modal-content identity-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2ecc71, #27ae60)' }}>
-              <div className="modal-title"><FaPlus className="modal-icon" /> {t('createAccount')}</div>
-              <button className="modal-close-btn" onClick={closeIdentityModal} title={t('close')}><FaTimes /></button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={closeIdentityModal}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3 font-bold text-base text-white">
+                <FaPlus />
+                <span>{t('createAccount')}</span>
+              </div>
+              <button className="text-emerald-100 hover:text-white transition-colors bg-transparent border-none cursor-pointer text-lg" onClick={closeIdentityModal} title={t('close')}><FaTimes /></button>
             </div>
-            <div className="modal-body">
+            <div className="p-6 text-slate-800 dark:text-slate-100">
               <form onSubmit={handleCreateIdentity}>
-                <div className="form-grid">
-                  <div className="form-group full-width">
-                    <label>{t('fullName')}</label>
-                    <input type="text" value={tData(selectedIdentity.name)} disabled style={{ background: '#f1f5f9' }} />
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('fullName')}</label>
+                    <input type="text" className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 cursor-not-allowed" value={tData(selectedIdentity.name)} disabled />
                   </div>
-                  <div className="form-group full-width">
-                    <label>{t('username')} *</label>
-                    <input type="text" name="username" value={identityForm.username} onChange={handleIdentityChange} required autoFocus />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('username')} <span className="text-rose-500">*</span></label>
+                    <input type="text" name="username" className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={identityForm.username} onChange={handleIdentityChange} required autoFocus />
                   </div>
-                  <div className="form-group full-width">
-                    <label>{t('password')} *</label>
-                    <input type="password" name="password" value={identityForm.password} onChange={handleIdentityChange} required />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('password')} <span className="text-rose-500">*</span></label>
+                    <input type="password" name="password" className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={identityForm.password} onChange={handleIdentityChange} required />
                   </div>
-                  <div className="form-group full-width">
-                    <label>{t('confirmPassword')} *</label>
-                    <input type="password" name="confirmPassword" value={identityForm.confirmPassword} onChange={handleIdentityChange} required />
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('confirmPassword')} <span className="text-rose-500">*</span></label>
+                    <input type="password" name="confirmPassword" className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors" value={identityForm.confirmPassword} onChange={handleIdentityChange} required />
                   </div>
                 </div>
-                <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+                  <button type="submit" className="px-5 py-2.5 bg-green-600 hover:bg-green-400 text-white rounded-xl text-sm font-bold shadow-md transition-colors border-none cursor-pointer" disabled={loading}>
                     {loading ? t('creating') : t('save')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeIdentityModal}>{t('cancel')}</button>
+                  <button type="button" className="px-5 py-2.5 bg-red-600 hover:bg-red-400 text-white rounded-xl text-sm font-bold transition-colors border-none cursor-pointer" onClick={closeIdentityModal}>{t('cancel')}</button>
                 </div>
               </form>
             </div>

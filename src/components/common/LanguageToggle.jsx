@@ -7,28 +7,11 @@ const LanguageToggle = () => {
 
   return (
     <button
-      className="language-toggle"
+      className="bg-white/20 hover:bg-white/30 border border-white/30 backdrop-blur-sm text-white rounded-full px-3.5 py-1.5 cursor-pointer flex items-center gap-1.5 text-xs font-bold transition-all duration-200 outline-none"
       onClick={toggleLanguage}
       title={language === 'am' ? 'Switch to English' : 'ወደ አማርኛ ቀይር'}
-      style={{
-        background: 'rgba(255, 255, 255, 0.18)',
-        border: '1px solid rgba(255, 255, 255, 0.25)',
-        borderRadius: '20px',
-        padding: '6px 14px',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '6px',
-        fontSize: '13px',
-        fontWeight: '700',
-        color: '#ffffff',
-        transition: 'all 0.3s ease',
-        backdropFilter: 'blur(5px)',
-      }}
-      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'}
-      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.18)'}
     >
-      <FaGlobe style={{ fontSize: '15px' }} />
+      <FaGlobe className="text-sm" />
       <span>{language === 'am' ? '🇬🇧 EN' : '🇪🇹 AM'}</span>
     </button>
   );

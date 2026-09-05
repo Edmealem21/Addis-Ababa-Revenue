@@ -6,9 +6,7 @@ import { useLanguage } from '../../../context/LanguageContext';
 
 const UserData = () => {
   const { t, tData } = useLanguage();
-  // ============================================
-  // FALLBACK SAMPLE DATA (used if localStorage is empty)
-  // ============================================
+
   const defaultEmployees = [
     { 
       id: 1, 
@@ -43,73 +41,12 @@ const UserData = () => {
       createdAt: '2024-03-05',
       updatedAt: '2024-03-05'
     },
-    { 
-      id: 4, 
-      fullName: 'ዳዊት ሀይለማርያም', 
-      idNumber: 'REV-004', 
-      taxCenter: 'አዲስ አበባ ሳሪስ',
-      jobCategory: 'Officer',
-      status: 'Inactive',
-      identityCreated: false,
-      createdAt: '2024-04-20',
-      updatedAt: '2024-04-20'
-    },
-    { 
-      id: 5, 
-      fullName: 'ሄለን ገብረእግዚአብሔር', 
-      idNumber: 'REV-005', 
-      taxCenter: 'አዲስ አበባ ካዛንቺስ',
-      jobCategory: 'ICT Administrator',
-      status: 'Active',
-      identityCreated: false,
-      createdAt: '2024-05-12',
-      updatedAt: '2024-05-12'
-    },
-    { 
-      id: 6, 
-      fullName: 'አብይ አህመድ', 
-      idNumber: 'REV-006', 
-      taxCenter: 'አዲስ አበባ ላፍቶ',
-      jobCategory: 'Officer',
-      status: 'Pending',
-      identityCreated: false,
-      createdAt: '2024-06-18',
-      updatedAt: '2024-06-18'
-    },
-    { 
-      id: 7, 
-      fullName: 'ማርያም በቀለ', 
-      idNumber: 'REV-007', 
-      taxCenter: 'አዲስ አበባ ጉለሌ',
-      jobCategory: 'Authority',
-      status: 'Active',
-      identityCreated: false,
-      createdAt: '2024-07-22',
-      updatedAt: '2024-07-22'
-    },
-    { 
-      id: 8, 
-      fullName: 'ሳሙኤል ተስፋዬ', 
-      idNumber: 'REV-008', 
-      taxCenter: 'አዲስ አበባ ቀላም',
-      jobCategory: 'Officer',
-      status: 'Inactive',
-      identityCreated: false,
-      createdAt: '2024-08-30',
-      updatedAt: '2024-08-30'
-    },
+    
   ];
 
   const STORAGE_KEY = 'employeesData';
-
-  // ============================================
-  // SAFE CONTEXT ACCESS (optional sync)
-  // ============================================
   const context = useOutletContext();
 
-  // ============================================
-  // LOCAL STATE – load from localStorage or fallback to defaults
-  // ============================================
   const [employees, setEmployees] = useState(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -118,18 +55,12 @@ const UserData = () => {
         if (Array.isArray(parsed) && parsed.length) {
           return parsed;
         }
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) {}
     }
-    // if nothing in storage, use default sample data and save it
     localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultEmployees));
     return defaultEmployees;
   });
 
-  // ============================================
-  // PERSISTENCE – save to localStorage and sync with outlet context
-  // ============================================
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(employees));
     if (context?.setEmployees) {
@@ -137,9 +68,6 @@ const UserData = () => {
     }
   }, [employees, context]);
 
-  // ============================================
-  // REACT TO EXTERNAL UPDATES (other tabs / components)
-  // ============================================
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === STORAGE_KEY) {
@@ -148,28 +76,18 @@ const UserData = () => {
           if (Array.isArray(newData)) {
             setEmployees(newData);
           }
-        } catch (err) {
-          // ignore
-        }
+        } catch (err) {}
       }
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // ============================================
-  // LOCAL UPDATE WRAPPER (used by all CRUD handlers)
-  // ============================================
   const updateEmployees = (newEmployees) => {
     setEmployees(newEmployees);
   };
 
-  // ============================================
-  // SEARCH & MODAL STATE
-  // ============================================
   const [searchTerm, setSearchTerm] = useState('');
-
-  // Identity modal
   const [showIdentityModal, setShowIdentityModal] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [identityForm, setIdentityForm] = useState({
@@ -179,9 +97,6 @@ const UserData = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  // ============================================
-  // IDENTITY HANDLERS
-  // ============================================
   const handleIdentityChange = (e) => {
     const { name, value } = e.target;
     setIdentityForm(prev => ({ ...prev, [name]: value }));
@@ -258,9 +173,6 @@ const UserData = () => {
     }
   };
 
-  // ============================================
-  // FILTER & SEARCH LOGIC
-  // ============================================
   const filteredData = employees.filter(item => {
     const term = searchTerm.trim().toLowerCase();
     if (!term) return true;
@@ -295,164 +207,163 @@ const UserData = () => {
     );
   });
 
-  const currentData = filteredData;
-
-  // ============================================
-  // RENDER
-  // ============================================
   return (
-    <div className="page-content">
-      <div className="data-container">
-        <Toaster 
-          position="top-center"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#ffffff',
-              color: '#1a1a2e',
-              padding: '16px 20px',
-              borderRadius: '10px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-              fontSize: '14px',
-              fontWeight: '500',
-            },
-            success: {
-              icon: '✅',
-              style: { borderLeft: '4px solid #27ae60' }
-            },
-            error: {
-              icon: '❌',
-              style: { borderLeft: '4px solid #e74c3c' }
-            }
-          }}
-        />
+    <div className="p-4 md:p-6 w-full text-slate-800 dark:text-slate-100">
+      <Toaster 
+        position="top-center"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: '#ffffff',
+            color: '#1a1a2e',
+            padding: '16px 20px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+            fontSize: '14px',
+            fontWeight: '500',
+          },
+          success: {
+            icon: '✅',
+            style: { borderLeft: '4px solid #27ae60' }
+          },
+          error: {
+            icon: '❌',
+            style: { borderLeft: '4px solid #e74c3c' }
+          }
+        }}
+      />
 
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
         {/* FRAME HEADER */}
-        <div className="frame-header">
-          <div className="search-wrapper">
-            <div className="search-box">
-              <FaSearch className="search-icon" />
-              <input
-                type="text"
-                placeholder={t('searchPlaceholder')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+        <div className="bg-slate-50 dark:bg-slate-800/80 p-4 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 mb-6 flex justify-end">
+          <div className="flex items-center gap-2 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl px-3.5 py-2 w-full sm:w-72 focus-within:ring-2 focus-within:ring-navy-800/20 dark:focus-within:ring-gold-400/20 transition-all">
+            <FaSearch className="text-slate-400 dark:text-slate-300 shrink-0 text-sm" />
+            <input
+              type="text"
+              className="bg-transparent border-none outline-none text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-400 w-full"
+              placeholder={t('searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         </div>
 
-        {/* MAIN CARDS GRID */}
-        <div className="cards-grid">
-          {currentData.map((employee) => {
+        {/* CARDS GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+          {filteredData.map((employee) => {
             const identityCreated = employee.identityCreated || false;
             return (
-              <div className="data-card" key={employee.id}>
-                <div className="card-header">
-                  <div className="card-header-left">
-                    <div className="card-avatar">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col justify-between hover:shadow-xl transition-all duration-300 hover:-translate-y-1" key={employee.id}>
+                <div className="p-4 border-b border-slate-100 dark:border-slate-700/60 flex items-start justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-blue-600 dark:bg-blue-400 text-white dark:text-slate-900 font-bold flex items-center justify-center text-lg shadow-md shrink-0">
                       {(tData(employee.fullName) || 'U').charAt(0).toUpperCase()}
                     </div>
-                    <div className="card-title-group">
-                      <div className="card-title">{tData(employee.fullName)}</div>
-                      <div className="card-subtitle">{tData(employee.jobCategory || 'Officer')}</div>
+                    <div>
+                      <div className="font-bold text-base text-navy-800 dark:text-gold-400 line-clamp-1">{tData(employee.fullName)}</div>
+                      <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 line-clamp-1">{tData(employee.jobCategory || 'Officer')}</div>
                     </div>
                   </div>
-                  <span className={`status-badge ${employee.status === 'Active' ? 'active' : employee.status === 'Inactive' ? 'inactive' : 'pending'}`}>
+                  <span className={`text-xs font-extrabold px-2 py-1 rounded-lg shrink-0 ${
+                    employee.status === 'Active' 
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-green-600 dark:text-green-400 border border-emerald-200 dark:border-emerald-800' 
+                      : employee.status === 'Inactive' 
+                        ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800' 
+                        : 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800'
+                  }`}>
                     {tData(employee.status === 'Active' ? 'ንቁ' : employee.status === 'Inactive' ? 'ተቋርጧል' : 'በመጠባበቅ ላይ')}
                   </span>
                 </div>
-                <div className="card-body">
-                  <div className="card-field">
-                    <span className="card-label">🆔 {t('idNumber')}</span>
-                    <span className="card-value">{employee.idNumber}</span>
+
+                <div className="p-4 space-y-2 text-sm flex-1">
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-0.5">🆔 {t('idNumber')}</span>
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{employee.idNumber}</span>
                   </div>
-                  <div className="card-field">
-                    <span className="card-label">🏢 {t('taxCenter')}</span>
-                    <span className="card-value">{tData(employee.taxCenter)}</span>
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-0.5">🏢 {t('taxCenter')}</span>
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{tData(employee.taxCenter)}</span>
                   </div>
-                  <div className="card-field">
-                    <span className="card-label">💼 {t('jobCategory')}</span>
-                    <span className="card-value">{tData(employee.jobCategory || 'Officer')}</span>
+                  <div>
+                    <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-0.5">💼 {t('jobCategory')}</span>
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">{tData(employee.jobCategory || 'Officer')}</span>
                   </div>
                 </div>
-                <div className="card-footer">
-                  <div className="card-actions" style={{ justifyContent: 'center' }}>
-                    {!identityCreated ? (
-                      <button 
-                        className="identity-btn create-btn" 
-                        onClick={() => openIdentityModal(employee)}
-                      >
-                        {t('createAccount')}
-                      </button>
-                    ) : (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', justifyContent: 'space-between' }}>
-                        <div className="tooltip-wrapper">
-                          <button 
-                            className="identity-btn status-btn"
-                            style={{ cursor: 'default' }}
-                          >
-                            {t('accountCreated')}
-                          </button>
-                          <div className="custom-tooltip">
-                            {t('accountCreatedTooltip')}
-                          </div>
-                        </div>
+
+                <div className="p-3 border-t border-slate-100 dark:border-slate-700/60 bg-slate-50/30 dark:bg-slate-800/30 flex justify-center">
+                  {!identityCreated ? (
+                    <button 
+                      className="w-full py-2 px-3 bg-red-600 hover:bg-red-400 text-white rounded-xl text-xs font-bold shadow-sm transition-colors border-none cursor-pointer text-center" 
+                      onClick={() => openIdentityModal(employee)}
+                    >
+                      {t('createAccount')}
+                    </button>
+                  ) : (
+                    <div className="flex items-center gap-2 w-full justify-between">
+                      <div className="relative group flex-1">
                         <button 
-                          className="action-btn delete" 
-                          title={t('deleteAccount')}
-                          onClick={() => handleDeleteIdentity(employee.id)}
+                          className="w-full py-2 px-3 bg-green-600 dark:bg-green-400 hover:cursor-not-allowed text-white dark:text-white rounded-xl text-xs font-bold border-none cursor-default text-center"
                         >
-                          <FaTrash />
+                          {t('accountCreated')}
                         </button>
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-slate-900 text-white text-xs py-1.5 px-3 rounded-lg shadow-xl whitespace-nowrap z-20">
+                          {t('accountCreatedTooltip')}
+                        </div>
                       </div>
-                    )}
-                  </div>
+                      <button 
+                        className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 hover:bg-rose-500 hover:text-white flex items-center justify-center transition-colors text-sm border-none cursor-pointer shrink-0" 
+                        title={t('deleteAccount')}
+                        onClick={() => handleDeleteIdentity(employee.id)}
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             );
           })}
-          {currentData.length === 0 && (
-            <div className="no-data-card">
-              <div style={{ fontSize: '48px', marginBottom: '10px' }}>📭</div>
-              <div>{t('noData')}</div>
+
+          {filteredData.length === 0 && (
+            <div className="col-span-full py-12 text-center text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700">
+              <div className="text-5xl mb-3">📭</div>
+              <div className="text-base font-semibold">{t('noData')}</div>
             </div>
           )}
         </div>
       </div>
 
-      {/* ============================================
-          IDENTITY MODAL
-          ============================================ */}
+      {/* IDENTITY MODAL */}
       {showIdentityModal && selectedEmployee && (
-        <div className="modal-overlay" onClick={closeIdentityModal}>
-          <div className="modal-content identity-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header" style={{ background: 'linear-gradient(135deg, #2ecc71, #27ae60)' }}>
-              <div className="modal-title">
-                <FaPlus className="modal-icon" />
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[10000] p-4" onClick={closeIdentityModal}>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-200 dark:border-slate-700 animate-slideUp" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-blue-600 text-white px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3 font-bold text-base text-white">
+                <FaPlus />
                 <span>{t('createAccount')}</span>
               </div>
-              <button className="modal-close-btn" onClick={closeIdentityModal} title={t('close')}>
+              <button className="text-emerald-100 hover:text-white transition-colors bg-transparent border-none cursor-pointer text-lg" onClick={closeIdentityModal} title={t('close')}>
                 <FaTimes />
               </button>
             </div>
-            <div className="modal-body">
+            <div className="p-6 text-slate-800 dark:text-slate-100">
               <form onSubmit={handleCreateIdentity}>
-                <div className="form-grid">
-                  <div className="form-group full-width">
-                    <label>{t('fullName')}</label>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('fullName')}</label>
                     <input
                       type="text"
+                      className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-100 dark:bg-slate-700/50 text-slate-500 dark:text-slate-400 cursor-not-allowed"
                       value={tData(selectedEmployee.fullName)}
                       disabled
-                      style={{ background: '#f1f5f9', cursor: 'not-allowed' }}
                     />
                   </div>
-                  <div className="form-group full-width">
-                    <label>{t('username')} <span className="required">*</span></label>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('username')} <span className="text-rose-500">*</span></label>
                     <input
                       type="text"
                       name="username"
+                      className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors"
                       placeholder="ለምሳሌ: aster.a"
                       value={identityForm.username}
                       onChange={handleIdentityChange}
@@ -460,22 +371,24 @@ const UserData = () => {
                       autoFocus
                     />
                   </div>
-                  <div className="form-group full-width">
-                    <label>{t('password')} <span className="required">*</span></label>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('password')} <span className="text-rose-500">*</span></label>
                     <input
                       type="password"
                       name="password"
+                      className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors"
                       placeholder="የይለፍ ቃል ያስገቡ"
                       value={identityForm.password}
                       onChange={handleIdentityChange}
                       required
                     />
                   </div>
-                  <div className="form-group full-width">
-                    <label>{t('confirmPassword')} <span className="required">*</span></label>
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">{t('confirmPassword')} <span className="text-rose-500">*</span></label>
                     <input
                       type="password"
                       name="confirmPassword"
+                      className="w-full px-3.5 py-2.5 border-2 border-slate-200 dark:border-slate-600 rounded-xl text-sm bg-slate-50 dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:outline-none focus:border-navy-800 dark:focus:border-gold-400 transition-colors"
                       placeholder="የይለፍ ቃል እንደገና ያስገቡ"
                       value={identityForm.confirmPassword}
                       onChange={handleIdentityChange}
@@ -483,11 +396,11 @@ const UserData = () => {
                     />
                   </div>
                 </div>
-                <div className="modal-actions">
-                  <button type="submit" className="btn-btn-success" disabled={loading}>
+                <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-slate-100 dark:border-slate-700">
+                  <button type="submit" className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-sm font-bold shadow-md transition-colors border-none cursor-pointer" disabled={loading}>
                     {loading ? t('creating') : t('save')}
                   </button>
-                  <button type="button" className="btn-btn-secondary" onClick={closeIdentityModal}>
+                  <button type="button" className="px-5 py-2.5 bg-red-600 hover:bg-red-400 text-white rounded-xl text-sm font-bold transition-colors border-none cursor-pointer" onClick={closeIdentityModal}>
                     {t('cancel')}
                   </button>
                 </div>

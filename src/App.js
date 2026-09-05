@@ -33,7 +33,7 @@ import AllNotifies from './components/officer/pages/AllNotifies';
 import AuthorityLayout from './components/authority/AuthorityLayout';
 import AuthorityDashboard from './components/authority/pages/Dashboard';
 
-import './styles/App.css';
+
 
 function App() {
   return (

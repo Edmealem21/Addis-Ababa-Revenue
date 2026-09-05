@@ -45,7 +45,26 @@ const translations = {
     loggingIn: 'እባክዎ ይጠብቁ...',
     demoAccounts: 'ተግባራዊ መግቢያዎች (Demo Accounts):',
     loginError: 'የተሳሳተ የተጠቃሚ ስም ወይም የይለፍ ቃል አስገብተዋል!',
-    footerText: 'የአዲስ አበባ ከተማ አስተዳደር ገቢዎብ',
+    footerText: 'የአዲስ አበባ ከተማ አስተዳደር ገቢዎች ቢሮ',
+    cityRevenueBureau: 'የአዲስ አበባ ከተማ አስተዳደር ገቢዎች ቢሮ',
+    cityRevenueBureauFooter: 'የአዲስ አበባ ከተማ አስተዳደር ገቢዎች',
+
+    // Dashboard Stats
+    totalTaxCenters: 'ጠቅላላ የታክስ ማእከላት',
+    totalEmployees: 'ጠቅላላ ሰራተኞች',
+    totalUsers: 'ጠቅላላ ተጠቃሚዎች',
+    totalTaxPayers: 'ጠቅላላ ግብር ከፋዮች',
+    totalBankAccounts: 'ጠቅላላ የባንክ መለያዎች',
+    pendingEvaluations: 'በመጠባበቅ ላይ ያሉ ግምገማዎች',
+    approvedRecords: 'የጸደቁ መዝገቦች',
+    rejectedRecords: 'ውድቅ የተደረጉ መዝገቦች',
+    pendingNotifications: 'በመጠባበቅ ላይ ያሉ ማሳወቂያዎች',
+    evaluatedRecords: 'የተገመገሙ መዝገቦች',
+    adminDashboardTitle: 'የአስተዳዳሪ ዳሽቦርድ',
+    ictDashboardTitle: 'የአይቲ አስተዳዳሪ ዳሽቦርድ',
+    authorityDashboardTitle: 'የባለስልጣን ዳሽቦርድ',
+    officerDashboardTitle: 'የኦፊሰር ዳሽቦርድ',
+    dashboardOverview: 'የስርዓቱ አጠቃላይ አፈፃፀም መረጃ',
 
     // Toggle tooltips & buttons
     switchToDark: 'ወደ ጨለማ ሁነታ ቀይር',
@@ -184,6 +203,25 @@ const translations = {
     demoAccounts: 'Demo Accounts:',
     loginError: 'Invalid username or password!',
     footerText: 'Addis Ababa City Administration Revenues Bureau',
+    cityRevenueBureau: 'Addis Ababa City Administration Revenues Bureau',
+    cityRevenueBureauFooter: 'Addis Ababa City Administration Revenues',
+
+    // Dashboard Stats
+    totalTaxCenters: 'Total Tax Centers',
+    totalEmployees: 'Total Employees',
+    totalUsers: 'Total Users',
+    totalTaxPayers: 'Total Tax Payers',
+    totalBankAccounts: 'Total Bank Accounts',
+    pendingEvaluations: 'Pending Evaluations',
+    approvedRecords: 'Approved Records',
+    rejectedRecords: 'Rejected Records',
+    pendingNotifications: 'Pending Notifications',
+    evaluatedRecords: 'Evaluated Records',
+    adminDashboardTitle: 'Admin Dashboard',
+    ictDashboardTitle: 'ICT Administrator Dashboard',
+    authorityDashboardTitle: 'Authority Dashboard',
+    officerDashboardTitle: 'Officer Dashboard',
+    dashboardOverview: 'System Summary Overview',
 
     // Toggle tooltips & buttons
     switchToDark: 'Switch to Dark Mode',

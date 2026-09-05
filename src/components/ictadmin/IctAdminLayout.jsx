@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { 
-  FaHome, FaUniversity, FaUsers, FaUser, FaFileInvoice, 
-  FaChevronDown, FaChevronRight 
+  FaTachometerAlt, 
+  FaUniversity, 
+  FaUsers, 
+  FaUser, 
+  FaUserCog, 
+  FaFileInvoice 
 } from 'react-icons/fa';
 import Header from '../common/Header';
-import addisLogo from '../../assets/images/addis-logo.png';
-import { useLanguage } from '../../context/LanguageContext';
+import Sidebar from '../common/Sidebar';
 import Footer from '../common/Footer';
+import { useLanguage } from '../../context/LanguageContext';
 
 const initialEmployees = [
   { id: 1, fullName: 'አስቴር አለሙ', idNumber: 'REV-001', jobCategory: 'ICT Administrator', taxCenter: 'አዲስ አበባ ቅዱስ ጊዮርጊስ', status: 'Active', createdAt: '2024-01-15', updatedAt: '2024-01-15' },
@@ -15,64 +19,54 @@ const initialEmployees = [
 ];
 
 const IctAdminLayout = () => {
-  const [employeesExpanded, setEmployeesExpanded] = useState(true);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [employees, setEmployees] = useState(initialEmployees);
   const { t } = useLanguage();
 
-  const toggleSidebar = () => setSidebarCollapsed(!sidebarCollapsed);
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  const ictAdminMenuItems = [
+    { path: '/ictadmin/dashboard', label: t('dashboard'), icon: <FaTachometerAlt /> },
+    { path: '/ictadmin/bankaccounts', label: t('bankAccounts'), icon: <FaUniversity /> },
+    {
+      key: 'employees',
+      label: t('employees'),
+      icon: <FaUsers />,
+      children: [
+        { path: '/ictadmin/employees/employee-data', label: t('employeeData'), icon: <FaUser /> },
+        { path: '/ictadmin/employees/user-data', label: t('userData'), icon: <FaUserCog /> },
+      ],
+    },
+    { path: '/ictadmin/taxpayers', label: t('taxPayers'), icon: <FaFileInvoice /> },
+  ];
 
   return (
-    <div className="ictadmin-container">
-      <Header 
-        title={t('ictAdmin')} 
-        toggleSidebar={toggleSidebar} 
+    <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-sans">
+      <Header
+        title={t('ictAdmin')}
+        toggleSidebar={toggleSidebar}
+        menuItems={ictAdminMenuItems}
+        roleTitle={t('ictAdmin')}
       />
 
-      <div className="ictadmin-main">
-        {/* Sidebar */}
-        <div className={`ictadmin-sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
-          <div className="ictadmin-brand">
-            <img src={addisLogo} alt="Addis Ababa Revenues Bureau" />
-            <div className="ictadmin-welcome-text">{t('navMenu')}</div>
-          </div>
-          <nav className="ictadmin-nav">
-            <NavLink to="dashboard" className={({ isActive }) => `ictadmin-nav-item ${isActive ? 'active' : ''}`}>
-              <FaHome /> {!sidebarCollapsed && t('dashboard')}
-            </NavLink>
-            <NavLink to="bankaccounts" className={({ isActive }) => `ictadmin-nav-item ${isActive ? 'active' : ''}`}>
-              <FaUniversity /> {!sidebarCollapsed && t('bankAccounts')}
-            </NavLink>
-
-            <div className="ictadmin-nav-item ictadmin-nav-parent" onClick={() => setEmployeesExpanded(!employeesExpanded)}>
-              <FaUsers /> {!sidebarCollapsed && t('employees')}
-              {!sidebarCollapsed && (employeesExpanded ? <FaChevronDown /> : <FaChevronRight />)}
-            </div>
-            {employeesExpanded && !sidebarCollapsed && (
-              <>
-                <NavLink to="employees/employee-data" className={({ isActive }) => `ictadmin-nav-subitem ${isActive ? 'active' : ''}`}>
-                  <FaUser /> {t('employeeData')}
-                </NavLink>
-                <NavLink to="employees/user-data" className={({ isActive }) => `ictadmin-nav-subitem ${isActive ? 'active' : ''}`}>
-                  <FaUser /> {t('userData')}
-                </NavLink>
-              </>
-            )}
-
-            <NavLink to="taxpayers" className={({ isActive }) => `ictadmin-nav-item ${isActive ? 'active' : ''}`}>
-              <FaFileInvoice /> {!sidebarCollapsed && t('taxPayers')}
-            </NavLink>
-          </nav>
+      <div className="flex flex-1 min-h-[calc(100vh-57px)] w-full overflow-hidden relative">
+        <div className="hidden md:flex shrink-0">
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            menuItems={ictAdminMenuItems}
+            roleTitle={t('ictAdmin')}
+          />
         </div>
 
-        {/* Content Area */}
-        <div className="ictadmin-content">
-          <div className="ictadmin-page-content">
+        <div className="flex-1 bg-slate-50 dark:bg-slate-900 flex flex-col min-h-[calc(100vh-57px)] overflow-x-hidden w-full">
+          <main className="flex-1 p-3 sm:p-5 md:p-6 overflow-y-auto">
             <Outlet context={{ employees, setEmployees }} />
-          </div>
+          </main>
+          <Footer />
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
